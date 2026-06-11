@@ -1,5 +1,4 @@
 #Gestiona los usuarios, perfiles y, lo más importante, los roles (Autor, Editor, Administrador).
-from email.policy import default
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 # Create your models here.
@@ -13,7 +12,7 @@ class User(AbstractUser):
 
     role = models.CharField(
         max_length=10,
-        choice =ROLE_CHOICES,
+        choices=ROLE_CHOICES,
         default="reader"
     )
 

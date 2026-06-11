@@ -127,6 +127,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+AUTH_USER_MODEL = 'users.User'
+
 # URL pública para acceder a los archivos desde el navegador
 MEDIA_URL = '/media/'
 
