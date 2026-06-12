@@ -7,6 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth import get_user_model
+from django.contrib import messages
 User = get_user_model()
 class ArticleListView(ListView):
     model = Article
@@ -50,7 +51,7 @@ class AdminDashboardView(UserPassesTestMixin, TemplateView):
         context['published_articles'] = Article.objects.filter(status = 'published').count()
         context['draft_articles'] = Article.objects.filter(status = 'draft').count()
         context['recent_articles'] = Article.objects.select_related('autor', 'category').order_by('-created_at')[:5]
-        context ['user_list'] = User.objects.filter(is_superuser=False).order_by('username')
+        context ['users_list'] = User.objects.filter(is_superuser=False).order_by('username')
         return context
     
 class ChangeUserRoleView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -60,6 +61,14 @@ class ChangeUserRoleView(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request, user_id):
         user_to_edit = get_object_or_404(User, id=user_id)
         form = ChangeRoleForm(request.POST, instance=user_to_edit)
+        #if form.is_valid():
+        #    form.save()
         if form.is_valid():
             form.save()
+            messages.success(
+                request, 
+                f"¡Rol de @{user_to_edit.username} actualizado con éxito a '{user_to_edit.get_role_display()}'!"
+            )
+        else:
+            messages.error(request, "Hubo un problema al intentar cambiar el rol.")
         return redirect('admin_dashboard')

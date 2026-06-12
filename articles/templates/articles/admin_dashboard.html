@@ -13,7 +13,15 @@
         <h1>Centro de Control de la Revista</h1>
         <p>Bienvenido, Administrador Principal. Aquí tienes el estado global de las publicaciones.</p>
     </div>
-
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
     <div class="stats-grid">
         <div class="stat-card">
             <h3>📝 Total Artículos</h3>
@@ -89,7 +97,7 @@
                                     {% csrf_token %}
                                     <select name="role" class="select-role">
                                         <option value="reader" {% if u.role == 'reader' %}selected{% endif %}>Lector</option>
-                                        <option value="writer" {% if u.role == 'writer' %}selected{% endif %}>Redactor</option>
+                                        <option value="reviewer" {% if u.role == 'reviewer' %}selected{% endif %}>Redactor</option>
                                         <option value="editor" {% if u.role == 'editor' %}selected{% endif %}>Editor</option>
                                     </select>
                                     <button type="submit" class="btn-update-role">
