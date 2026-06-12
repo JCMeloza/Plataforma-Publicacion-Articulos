@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Inicio - Últimos Artículos{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<h2 class="feed-title">Últimos Artículos Publicados</h2>
+
+{% if articles %}
+    
+    {% for article in articles %}
+        <div class="article-card">
+            
+            {% if article.image %}
+                <img src="{{ article.image.url }}" alt="{{ article.title }}" class="article-img">
+            {% endif %}
+
+            <div class="article-body">
+                <h3>{{ article.title }}</h3>
+                
+                <div class="article-meta">
+                    Por: <strong>{{ article.autor.username }}</strong> | 
+                    Categoría: <strong>{{ article.category.name|default:"Sin categoría" }}</strong> | 
+                    Fecha: {{ article.created_at|date:"d/m/Y" }}
+                </div>
+                
+                <p class="article-excerpt">{{ article.content|truncatewords:30 }}</p>
+                
+                <a href="#" class="btn-read">Leer artículo completo →</a>
+                
+                <br>
+                
+                <div class="article-stats">
+                    ❤️ {{ article.likes.count }} Me gusta &nbsp;&nbsp;•&nbsp;&nbsp; 💬 {{ article.comments.count }} Comentarios
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+
+{% else %}
+    <div class="no-articles">
+        <p>No hay ningún artículo publicado todavía en la revista.</p>
+        {% if user.role == 'writer' or user.role == 'editor' %}
+            <p><a href="#">¡Sé el primero en escribir uno!</a></p>
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

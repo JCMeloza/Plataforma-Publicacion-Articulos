@@ -1,0 +1,26 @@
+<header>
+    <h2><a href="{% url 'home' %}">📰 Mi Revista</a></h2>
+    <nav>
+        <a href="{% url 'about' %}">Acerca de</a>
+        <a href="{% url 'contact' %}">Contacto</a>
+        
+        <span class="nav-separator">|</span>
+
+        {% if user.is_authenticated %}
+            <span>Hola, <strong>{{ user.username }}</strong> ({{ user.get_role_display }})</span>
+            
+            {% if user.role == 'writer' or user.role == 'editor' %}
+                <a href="#">✍️ Escritorio</a>
+            {% endif %}
+            
+            {% if user.is_superuser %}
+                <a href="#">⚙️ Roles</a>
+            {% endif %}
+            
+            <a href="#" class="btn-logout">Salir</a>
+        {% else %}
+            <a href="#">Entrar</a>
+            <a href="#">Registrarse</a>
+        {% endif %}
+    </nav>
+</header>
