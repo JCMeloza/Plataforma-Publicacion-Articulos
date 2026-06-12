@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Acerca de Nosotros - Mi Revista{% endblock %}
+
+{% block content %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/acerca_de.css' %}">
+{% endblock %}
+
+<div class="about-header">
+    <h2>Nuestra Comunidad Editorial</h2>
+    <p>Somos una plataforma colaborativa donde el conocimiento se comparte, se revisa y se publica con rigurosidad y pasión.</p>
+</div>
+
+<hr style="border: 0; height: 1px; background: #eee;">
+
+<div class="grid-roles">
+    <div class="card-role">
+        <span class="icon">📖</span>
+        <h3>Lectores</h3>
+        <p>El motor de nuestra web. Registrate para interactuar, debatir en los comentarios y apoyar tus artículos favoritos con un "Me gusta".</p>
+    </div>
+    
+    <div class="card-role">
+        <span class="icon">✍️</span>
+        <h3>Redactores</h3>
+        <p>Creadores de contenido que transforman ideas en artículos. Escriben y envían sus borradores directamente desde su escritorio web.</p>
+    </div>
+    
+    <div class="card-role">
+        <span class="icon">🕵️‍♂️</span>
+        <h3>Editores</h3>
+        <p>Los guardianes de la calidad. Revisan minuciosamente los textos pendientes, aprueban publicaciones y guían a los autores con su feedback.</p>
+    </div>
+</div>
+{% endblock %}
