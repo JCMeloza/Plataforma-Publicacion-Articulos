@@ -34,6 +34,9 @@ class CustomLoginView(LoginView):
         if user.is_superuser:
             return reverse('admin_dashboard')
         
+        if user.role in ['reviewer', 'editor']:
+            return reverse('work_dashboard')
+        
         return reverse('home')
 
 class CustomLogoutView(LogoutView):
@@ -72,3 +75,24 @@ class ChangeUserRoleView(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             messages.error(request, "Hubo un problema al intentar cambiar el rol.")
         return redirect('admin_dashboard')
+    
+class WorkDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    template_name = 'articles/work_dashboard.html'
+    context_object_name = 'articles'
+
+    # Regla de seguridad: Solo entran revisores o editores
+    def test_func(self):
+        return self.request.user.role in ['reviewer', 'editor']
+
+    def get_queryset(self):
+        user = self.request.user
+        # Si es Revisor: ve solo SUS artículos (tanto borradores como publicados)
+        if user.role == 'reviewer':
+            return Article.objects.filter(autor=user).order_by('-created_at')
+        
+        # Si es Editor: ve los artículos de TODOS que estén esperando aprobación
+        # (Ajusta 'draft' por 'pending' si creaste ese estado en tus choices)
+        if user.role == 'editor':
+            return Article.objects.filter(status='pending').select_related('autor').order_by('-created_at')
+        
+        return Article.objects.none()

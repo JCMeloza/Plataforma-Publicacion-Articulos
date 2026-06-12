@@ -195,3 +195,65 @@
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+
+/* Gris para los borradores del escritor */
+.badge-draft { 
+    background-color: #f1f5f9; 
+    color: #475569; 
+}
+
+/* Azul o Amarillo para los que están esperando al editor */
+.badge-pending { 
+    background-color: #e0f2fe; 
+    color: #0369a1; 
+}
+
+/* Verde para los artículos vivos en la web */
+.badge-published { 
+    background-color: #d1fae5; 
+    color: #065f46; 
+}
+
+/* Rojo para las publicaciones rechazadas */
+.badge-rejected { 
+    background-color: #fef2f2; 
+    color: #991b1b; 
+}
+
+/* Contenedor de acciones del editor en la tabla */
+.editor-actions-group {
+    display: flex;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+}
+
+/* Botón de aprobar (Verde) */
+.btn-approve {
+    background-color: #10b981;
+    color: #ffffff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.btn-approve:hover { background-color: #059669; }
+
+/* Botón de rechazar (Rojo) */
+.btn-reject {
+    background-color: #ef4444;
+    color: #ffffff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.btn-reject:hover { background-color: #dc2626; }

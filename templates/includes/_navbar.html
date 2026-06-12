@@ -20,6 +20,9 @@
             {% if user.is_superuser %}
                 <a href="{% url 'admin_dashboard' %}" class="btn-dashboard-link">Panel Admin</a>
             {% endif %}
+            {% if user.role == 'reviewer' or user.role == 'editor' %}
+                <a href="{% url 'work_dashboard' %}" class="btn-dashboard-link">Mi Escritorio</a>
+            {% endif %}
 
             <form action="{% url 'logout' %}" method="POST" class="form-logout">
                 {% csrf_token %}

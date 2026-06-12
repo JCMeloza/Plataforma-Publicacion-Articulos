@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Escritorio de Trabajo{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div>
+            <h1>Espacio de Trabajo: {{ user.get_role_display }}</h1>
+            <p>Hola {{ user.username }}, aquí tienes las herramientas asignadas a tu nivel de acceso.</p>
+        </div>
+        
+        {% if user.role == 'reviewer' %}
+            <a href="#" class="btn-update-role">✍ Escribir Artículo</a>
+        {% endif %}
+    </div>
+
+    <div class="table-container">
+        {% if user.role == 'reviewer' %}
+            <h2>Mis Artículos Redactados</h2>
+        {% else %}
+            <h2>Artículos Pendientes de Tu Revisión Editorial</h2>
+        {% endif %}
+
+        {% if articles %}
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        {% if user.role == 'editor' %}
+                            <th>Autor</th>
+                        {% endif %}
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for article in articles %}
+                        <tr>
+                            <td><strong>{{ article.title }}</strong></td>
+                            {% if user.role == 'editor' %}
+                                <td>{{ article.autor.username }}</td>
+                            {% endif %}
+                            <td>{{ article.created_at|date:"d M Y" }}</td>
+                            <td>
+                                <span class="badge badge-{{ article.status }}">
+                                    {{ article.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if user.role == 'reviewer' %}
+                                    <a href="#" class="btn-update-role">Editar</a>
+                                {% elif user.role == 'editor' %}
+                                    <div class="editor-actions-group">
+                                        <button class="btn-approve">Aprobar</button>
+                                        <button class="btn-reject">Rechazar</button>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data">
+                {% if user.role == 'reviewer' %}
+                    Aún no has escrito ningún artículo. ¡Empieza creando el primero!
+                {% else %}
+                    ¡Al día! No hay artículos pendientes de aprobación en este momento.
+                {% endif %}
+            </p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
