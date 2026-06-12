@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import ArticleListView, RegisterView, CustomLoginView, CustomLogoutView
+from .views import AdminDashboardView, ArticleListView, ChangeUserRoleView, RegisterView, CustomLoginView, CustomLogoutView
 
 urlpatterns = [
     path('', ArticleListView.as_view(), name='home'),
@@ -10,4 +10,7 @@ urlpatterns = [
     path('registro/', RegisterView.as_view(), name='registro'),
     path('login/', CustomLoginView.as_view(), name='login'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
+
+    path('admin-dashboard/', AdminDashboardView.as_view(template_name='articles/admin_dashboard.html'), name='admin_dashboard'),
+    path('dashboard/admin/change-role/<int:user_id>/', ChangeUserRoleView.as_view(), name='change_role'),
 ]
