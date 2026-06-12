@@ -17,10 +17,10 @@
                 <a href="#">⚙️ Roles</a>
             {% endif %}
             
-            <a href="#" class="btn-logout">Salir</a>
+            <a href="{% url 'logout' %}" class="btn-logout">Salir</a>
         {% else %}
-            <a href="#">Entrar</a>
-            <a href="#">Registrarse</a>
+            <a href="{% url 'login' %}">Entrar</a>
+            <a href="{% url 'registro' %}">Registrarse</a>
         {% endif %}
     </nav>
 </header>

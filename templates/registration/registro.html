@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Cuenta - Mi Revista{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/contacto.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="contact-container">
+    <h2>Crear una Cuenta</h2>
+    <p class="subtitle">Regístrate para poder leer, comentar y guardar tus artículos favoritos.</p>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        {{ form.as_p }}
+        
+        <button type="submit" class="btn-submit">Registrarse</button>
+    </form>
+    
+    <p class="auth-switch">
+        ¿Ya tienes cuenta? <a href="{% url 'login' %}">Inicia sesión</a>
+    </p>
+</div>
+{% endblock %}
