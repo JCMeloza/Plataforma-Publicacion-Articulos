@@ -3,15 +3,29 @@
     <nav>
         <a href="{% url 'about' %}">Acerca de</a>
         <a href="{% url 'contact' %}">Contacto</a>
-        
+
         <span class="nav-separator">|</span>
 
         {% if user.is_authenticated %}
-            <span>Hola, <strong>{{ user.username }}</strong> ( {{ user.get_role_display}} )</span>
+            <span>Hola, <strong>{{ user.username }}</strong> 
+                <small class="role-badge">
+                    {% if user.is_superuser %}
+                        (Administrador)
+                    {% else %}
+                        ({{ user.get_role_display }})
+                    {% endif %}
+                </small>
+            </span>
             
+            {% if user.is_superuser %}
+                <a href="{% url 'admin_dashboard' %}" class="btn-dashboard-link">Panel Admin</a>
+            {% endif %}
+
             <form action="{% url 'logout' %}" method="POST" class="form-logout">
                 {% csrf_token %}
-                <button type="submit" class="btn-logout-submit">Salir</button>
+                <button type="submit" class="btn-logout-submit">
+                    Salir
+                </button>
             </form>
         {% else %}
             <a href="{% url 'login' %}">Entrar</a>

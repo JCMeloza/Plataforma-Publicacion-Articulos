@@ -94,3 +94,29 @@ footer {
     color: #cc3333;
     text-decoration: underline;
 }
+
+/* Estilo para el rol que sale al lado del nombre */
+.role-badge {
+    font-size: 0.8rem;
+    color: #00adb5; /* El color de acento de tu web */
+    font-weight: 600;
+    margin-left: 5px;
+    text-transform: capitalize;
+}
+
+/* Enlace rápido al dashboard para el admin en la navbar */
+.btn-dashboard-link {
+    background-color: #334155;
+    color: #ffffff !important;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin-left: 10px;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn-dashboard-link:hover {
+    background-color: #475569;
+    text-decoration: none !important;
+}

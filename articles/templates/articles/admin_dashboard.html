@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Panel de Control Global - Admin{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>Centro de Control de la Revista</h1>
+        <p>Bienvenido, Administrador Principal. Aquí tienes el estado global de las publicaciones.</p>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>📝 Total Artículos</h3>
+            <p class="stat-number">{{ total_articles }}</p>
+        </div>
+        <div class="stat-card status-published">
+            <h3>🟢 Publicados</h3>
+            <p class="stat-number">{{ published_count }}</p>
+        </div>
+        <div class="stat-card status-draft">
+            <h3>🟡 Borradores / Revisiones</h3>
+            <p class="stat-number">{{ draft_count }}</p>
+        </div>
+    </div>
+
+    <div class="table-container">
+        <h2>Últimos movimientos en la plataforma</h2>
+        {% if recent_articles %}
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Categoría</th>
+                        <th>Estado</th>
+                        <th>Fecha de creación</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for article in recent_articles %}
+                        <tr>
+                            <td><strong>{{ article.title }}</strong></td>
+                            <td>{{ article.autor.username }}</td>
+                            <td>{{ article.category.name }}</td>
+                            <td>
+                                <span class="badge badge-{{ article.status }}">
+                                    {{ article.get_status_display }}
+                                </span>
+                            </td>
+                            <td>{{ article.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data">No hay artículos registrados en el sistema.</p>
+        {% endif %}
+    </div>
+    <div class="table-container table-users-spacing">
+        <h2>Gestión de Usuarios Registrados</h2>
+        {% if users_list %}
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Email</th>
+                        <th>Rol Actual</th>
+                        <th>Cambiar Rol</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users_list %}
+                        <tr>
+                            <td><strong>{{ u.username }}</strong></td>
+                            <td>{{ u.email }}</td>
+                            <td>
+                                <span class="badge badge-draft">
+                                    {{ u.get_role_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <form action="{% url 'change_role' u.id %}" method="POST" class="form-change-role">
+                                    {% csrf_token %}
+                                    <select name="role" class="select-role">
+                                        <option value="reader" {% if u.role == 'reader' %}selected{% endif %}>Lector</option>
+                                        <option value="writer" {% if u.role == 'writer' %}selected{% endif %}>Redactor</option>
+                                        <option value="editor" {% if u.role == 'editor' %}selected{% endif %}>Editor</option>
+                                    </select>
+                                    <button type="submit" class="btn-update-role">
+                                        Actualizar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data">No hay usuarios comunes registrados todavía.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
