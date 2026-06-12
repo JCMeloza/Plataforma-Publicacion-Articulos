@@ -137,3 +137,6 @@ MEDIA_URL = '/media/'
 
 # Ruta física en el disco duro donde se guardarán los archivos
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+LOGIN_URL = 'login'

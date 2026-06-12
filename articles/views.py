@@ -1,8 +1,8 @@
-from django.urls import reverse_lazy
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, ListView
 from .models import Article
 from django.contrib.auth.views import LoginView, LogoutView
-from django.contrib.auth.forms import UserCreationForm
+from .forms import CustomUserCreationForm
 # Create your views here.
 
 class ArticleListView(ListView):
@@ -15,9 +15,11 @@ class ArticleListView(ListView):
 
 # Vista para registro de usuarios
 class RegisterView(CreateView):
-    form_class = UserCreationForm
+    form_class = CustomUserCreationForm
     template_name = 'registration/registro.html'
     succes_url = reverse_lazy('login')
+    def get_success_url(self):
+        return reverse('login')
 
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
