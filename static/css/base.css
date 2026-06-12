@@ -67,3 +67,30 @@ footer {
     border-top: 1px solid #393e46; 
     font-size: 0.9rem;
 }
+
+/* Hace que el formulario no salte de línea y se mantenga en el menú */
+.form-logout {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+
+/* Transforma el botón nativo en un enlace estético */
+.btn-logout-submit {
+    background: none;
+    border: none;
+    color: #ff4a4a; /* Mantiene el color rojo de advertencia */
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 15px; /* Separación respecto al nombre de usuario */
+    transition: color 0.2s, text-decoration 0.2s;
+}
+
+/* Efecto al pasar el ratón por encima */
+.btn-logout-submit:hover {
+    color: #cc3333;
+    text-decoration: underline;
+}

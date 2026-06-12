@@ -7,17 +7,12 @@
         <span class="nav-separator">|</span>
 
         {% if user.is_authenticated %}
-            <span>Hola, <strong>{{ user.username }}</strong> ({{ user.get_role_display }})</span>
+            <span>Hola, <strong>{{ user.username }}</strong> ( {{ user.get_role_display}} )</span>
             
-            {% if user.role == 'writer' or user.role == 'editor' %}
-                <a href="#">✍️ Escritorio</a>
-            {% endif %}
-            
-            {% if user.is_superuser %}
-                <a href="#">⚙️ Roles</a>
-            {% endif %}
-            
-            <a href="{% url 'logout' %}" class="btn-logout">Salir</a>
+            <form action="{% url 'logout' %}" method="POST" class="form-logout">
+                {% csrf_token %}
+                <button type="submit" class="btn-logout-submit">Salir</button>
+            </form>
         {% else %}
             <a href="{% url 'login' %}">Entrar</a>
             <a href="{% url 'registro' %}">Registrarse</a>
