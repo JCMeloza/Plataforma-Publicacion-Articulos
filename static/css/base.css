@@ -1,0 +1,69 @@
+/* Estilos generales y reseteo básico */
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    margin: 0; 
+    padding: 0; 
+    line-height: 1.6; 
+    background-color: #fcfcfc;
+    color: #333;
+}
+
+/* Contenedor central de la página */
+.container { 
+    width: 85%; 
+    max-width: 1100px; 
+    margin: 30px auto; 
+    padding: 0 15px;
+    box-sizing: border-box;
+}
+
+/* Barra de Navegación Superior */
+header { 
+    background: #1a1a1a; 
+    color: #fff; 
+    padding: 15px 5%; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+}
+
+header a { 
+    color: #fff; 
+    text-decoration: none; 
+    transition: color 0.2s;
+}
+
+header a:hover {
+    color: #00adb5;
+}
+
+header nav {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+header nav span {
+    font-size: 0.9rem;
+    color: #ccc;
+    background: #2d2d2d;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+/* Pie de página */
+footer { 
+    background: #222831; 
+    color: #eceff1;
+    text-align: center; 
+    padding: 20px; 
+    margin-top: 60px; 
+    border-top: 1px solid #393e46; 
+    font-size: 0.9rem;
+}
