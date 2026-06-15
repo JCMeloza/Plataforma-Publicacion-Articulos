@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django.contrib.auth import get_user_model
 from django.contrib import messages
+from django.utils.text import slugify
 User = get_user_model()
 class ArticleListView(ListView):
     model = Article
@@ -110,6 +111,7 @@ class ReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
     def form_valid(self, form):
 
         form.instance.autor = self.request.user
+        form.instance.slug = slugify(form.instance.title)
         messages.add_message(
             self.request,
             messages.SUCCESS,
