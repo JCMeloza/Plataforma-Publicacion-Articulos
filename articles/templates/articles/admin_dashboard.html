@@ -112,7 +112,7 @@
                                     {% csrf_token %}
                                     <select name="role" class="select-role">
                                         <option value="reader" {% if u.role == 'reader' %}selected{% endif %}>Lector</option>
-                                        <option value="reviewer" {% if u.role == 'reviewer' %}selected{% endif %}>Revisor</option>
+                                        <option value="reviewer" {% if u.role == 'reviewer' %}selected{% endif %}>Redactor</option>
                                         <option value="editor" {% if u.role == 'editor' %}selected{% endif %}>Editor</option>
                                     </select>
                                     <button type="submit" class="btn-update-role">

@@ -55,12 +55,23 @@
                             </td>
                             <td>
                                 {% if user.role == 'reviewer' %}
-                                    <a href="#" class="btn-update-role">Editar</a>
-                                {% elif user.role == 'editor' %}
                                     <div class="editor-actions-group">
-                                        <button class="btn-approve">Aprobar</button>
-                                        <button class="btn-reject">Rechazar</button>
-                                    </div>
+                                        <a href="#" class="btn-update-role" style="text-decoration: none; background-color: #334155;">Editar</a>
+            
+                                        {% if article.status == 'draft' or article.status == 'rejected' %}
+                                            <form action="{% url 'send_to_review' article.id %}" method="POST" style="margin: 0; padding: 0;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn-approve" style="background-color: #0284c7;">
+                                                    🚀 Enviar a Revisión
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                            </div>
+                                        {% elif user.role == 'editor' %}
+                                            <div class="editor-actions-group">
+                                                <button class="btn-approve">Aprobar</button>
+                                                <button class="btn-reject">Rechazar</button>
+                                            </div>
                                 {% endif %}
                             </td>
                         </tr>

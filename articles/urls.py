@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import AdminDashboardView, ArticleListView, CategoryCreateView, ChangeUserRoleView, RegisterView, CustomLoginView, CustomLogoutView, ReviewCreateView, TagCreateView, WorkDashboardView
+from .views import AdminDashboardView, ArticleListView, CategoryCreateView, ChangeUserRoleView, RegisterView, CustomLoginView, CustomLogoutView, ReviewCreateView, SendToReviewView, TagCreateView, WorkDashboardView
 
 urlpatterns = [
     path('', ArticleListView.as_view(), name='home'),
@@ -18,5 +18,6 @@ urlpatterns = [
     path('dashboard/workspace/create/reviews/', ReviewCreateView.as_view(), name ='review_create'),
     path('dashboard/admin/category/create/', CategoryCreateView.as_view(), name='category_create'),
     path('dashboard/admin/tag/create/', TagCreateView.as_view(), name='tag_create'),
-     
+    
+    path('dashboard/workspace/send-to-review/<int:article_id>/', SendToReviewView.as_view(), name='send_to_review'),
 ]

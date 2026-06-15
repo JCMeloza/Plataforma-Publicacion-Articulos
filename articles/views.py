@@ -147,3 +147,26 @@ class TagCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
         messages.success(self.request, f"Etiqueta '{form.instance.name}' creada con éxito.")
         return super().form_valid(form)
 
+class SendToReviewView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        article = get_object_or_404(Article, id = self.kwargs['article_id'])
+        return self.request.user == article.autor
+    
+    def post(self, request, article_id):
+
+        #busca del artículo por su ID
+        article = get_object_or_404(Article, id=article_id)
+
+        if article.status in ['draft', 'pending']:
+            article.status = 'pending'
+            article.save()
+
+            messages.success(
+                request, 
+                f"🚀 ¡El artículo '{article.title}' ha sido enviado a revisión correctamente!"
+            )
+        else:
+            messages.error(request, "Este artículo no se puede enviar a revisión en su estado actual.")
+            
+        # Redirigimos de vuelta al escritorio de trabajo
+        return redirect('work_dashboard')
