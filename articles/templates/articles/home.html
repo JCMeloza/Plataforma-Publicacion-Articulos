@@ -30,7 +30,7 @@
                 
                 <p class="article-excerpt">{{ article.content|truncatewords:30 }}</p>
                 
-                <a href="#" class="btn-read">Leer artículo completo →</a>
+                <a href="{% url 'article_detail' article.id %}" class="btn-read">Leer artículo completo →</a>
                 
                 <br>
                 

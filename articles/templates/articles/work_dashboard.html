@@ -14,6 +14,15 @@
             <h1>Espacio de Trabajo: {{ user.get_role_display }}</h1>
             <p>Hola {{ user.username }}, aquí tienes las herramientas asignadas a tu nivel de acceso.</p>
         </div>
+        {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
         
         {% if user.role == 'reviewer' %}
             <a href="{% url 'review_create' %}" class="btn-update-role">✍ Escribir Artículo</a>
@@ -56,7 +65,7 @@
                             <td>
                                 {% if user.role == 'reviewer' %}
                                     <div class="editor-actions-group">
-                                        <a href="#" class="btn-update-role" style="text-decoration: none; background-color: #334155;">Editar</a>
+                                        <a href="{% url 'article_detail' article.id %}" class="btn-update-role" style="text-decoration: none; background-color: #334155;">Editar</a>
             
                                         {% if article.status == 'draft' or article.status == 'rejected' %}
                                             <form action="{% url 'send_to_review' article.id %}" method="POST" style="margin: 0; padding: 0;">
@@ -69,8 +78,14 @@
                                             </div>
                                         {% elif user.role == 'editor' %}
                                             <div class="editor-actions-group">
-                                                <button class="btn-approve">Aprobar</button>
-                                                <button class="btn-reject">Rechazar</button>
+                                                <form action="{% url 'approve_article' article.id %}" method="POST">
+                                                {% csrf_token %}
+                                                    <button class="btn-approve">Aprobar</button>
+                                                </form>
+                                                <form action="{% url 'reject_article' article.id %}" method="POST">
+                                                {% csrf_token %}
+                                                    <button class="btn-reject">Rechazar</button>
+                                                </form>    
                                             </div>
                                 {% endif %}
                             </td>

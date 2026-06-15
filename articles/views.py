@@ -1,5 +1,5 @@
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, ListView, TemplateView
+from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
 from .models import Article, Category, Tag
 from django.contrib.auth.views import LoginView, LogoutView
 from .forms import CategoryCreateForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm
@@ -170,3 +170,59 @@ class SendToReviewView(LoginRequiredMixin, UserPassesTestMixin, View):
             
         # Redirigimos de vuelta al escritorio de trabajo
         return redirect('work_dashboard')
+
+
+class ApproveArticleView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.role == 'editor'
+    
+    def post(self, request, article_id):
+        article = get_object_or_404(Article, id=article_id)
+
+        if article.status == 'pending':
+            article.status = 'published'
+            article.save()
+            messages.success(request, f"🟢 El artículo '{article.title}' ha sido PUBLICADO en la web.")
+        else:
+            messages.error(request, "Este artículo no está pendiente de revisión.")
+            
+        return redirect('work_dashboard')  
+
+class RejectArticleView(LoginRequiredMixin, UserPassesTestMixin, View):
+    def test_func(self):
+        return self.request.user.role == 'editor'
+    
+    def post(self, request, article_id):
+        article = get_object_or_404(Article, id=article_id)
+
+        if article.status == 'pending':
+            article.status = 'rejected'
+            article.save()
+            messages.success(request, f"🔴 El artículo '{article.title}' ha sido RECHAZADO Y devuelto al autor.")
+        else:
+            messages.error(request, "Este artículo no está pendiente de revisión.")
+            
+        return redirect('work_dashboard')  
+    
+class ArticleDetailView(DetailView):
+    model = Article
+    template_name = 'articles/article_detail.html'
+    context_object_name = 'article'
+
+class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Article
+    template_name = 'articles/review_create.html'
+    form_class = ReviewCreateForm
+    success_url = reverse_lazy('work_dashboard')
+
+    def test_func(self):
+        article = self.get_object()
+        return self.request.user == article.autor
+    
+    def from_valid(self, form):
+        if form.instance.status == 'rejected':
+            form.instance.status = 'draft'
+
+        messages.success(self.request, "¡Artículo actualizado correctamente!")
+        return super().form_valid(form)
+
