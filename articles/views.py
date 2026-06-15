@@ -1,8 +1,8 @@
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
-from .models import Article, Category, Tag
+from .models import Article, Category, Like, Tag
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import CategoryCreateForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm
+from .forms import CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
@@ -211,6 +211,18 @@ class ArticleDetailView(DetailView):
     template_name = 'articles/article_detail.html'
     context_object_name = 'article'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['comment_form'] = CommentForm()
+
+        context['total_likes'] = self.object.likes.count()
+        if self.request.user.is_authenticated:
+            context['user_has_liked'] = self.object.likes.filter(user=self.request.user).exists()
+        else:
+            context['user_has_liked'] = False
+            
+        return context
+
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
     template_name = 'articles/review_create.html'
@@ -228,3 +240,32 @@ class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         messages.success(self.request, "¡Artículo actualizado correctamente!")
         return super().form_valid(form)
 
+class AddCommentView(LoginRequiredMixin, View):
+    def post(self, request, article_id):
+        article = get_object_or_404(Article, id=article_id)
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.article = article
+            comment.user = request.user
+            comment.save()
+            messages.success(request, "Comentario agregado con éxito.")
+        else:
+            messages.error(request, "Hubo un error al agregar tu comentario. Por favor, inténtalo de nuevo.")
+        
+        return redirect('article_detail', pk=article.id)
+
+class LikeArticleView(LoginRequiredMixin, View):
+    def post(self, request, article_id):
+        article = get_object_or_404(Article, id= article_id)
+        liked_article = Like.objects.filter(article=article, user=request.user)
+
+        if liked_article.exists():
+            liked_article.delete()
+            messages.success(request, f"Has retirado tu 'Me gusta' del artículo '{article.title}'.")
+        else:
+            Like.objects.create(article=article, user=request.user)
+            messages.success(request, f"Has dado 'Me gusta' al artículo '{article.title}'.")
+        return redirect('article_detail', pk=article.id)
+        

@@ -42,7 +42,60 @@
             {{ article.content }}
         </div>
     </article>
+    <div class="interactions-section">
+        
+        <div class="likes-container">
+            {% if user.is_authenticated %}
+                <form action="{% url 'like_article' article.id %}" method="POST" class="like-form">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-like {% if user_has_liked %}has-liked{% endif %}">
+                        ❤️ {% if user_has_liked %}Ya no me gusta{% else %}Me gusta{% endif %}
+                    </button>
+                </form>
+            {% else %}
+                <span class="like-disabled-msg">❤️ Inicia sesión para dar Me gusta.</span>
+            {% endif %}
+            <strong class="likes-counter">{{ total_likes }} personas les gusta esto</strong>
+        </div>
 
+        <div class="comments-list-wrapper">
+            <h3>💬 Comentarios ({{ article.comments.count }})</h3>
+            {% if article.comments.all %}
+                <div class="comments-stack">
+                    {% for comment in article.comments.all %}
+                        <div class="comment-card">
+                            <div class="comment-metadata">
+                                <span class="comment-author">@{{ comment.user.username }}</span>
+                                <span class="comment-date">{{ comment.created_at|date:"d M Y, H:i" }}</span>
+                            </div>
+                            <p class="comment-text">{{ comment.content }}</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="no-comments-msg">Nadie ha comentado todavía. ¡Sé el primero!</p>
+            {% endif %}
+        </div>
+
+        <div class="add-comment-wrapper">
+            <h3>Deja tu opinión</h3>
+            {% if user.is_authenticated %}
+                <form action="{% url 'add_comment' article.id %}" method="POST" class="comment-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {{ comment_form.content }}
+                    </div>
+                    <button type="submit" class="btn-approve">
+                        Publicar Comentario
+                    </button>
+                </form>
+            {% else %}
+                <div class="alert alert-error alert-anonymous-gate">
+                    🔒 Debes <a href="{% url 'login' %}">iniciar sesión</a> para comentar o dar me gusta a este artículo.
+                </div>
+            {% endif %}
+        </div>
+    </div>
     <div class="article-footer-actions">
         <a href="{% url 'home' %}" class="btn-cancel">← Volver a la página principal</a>
     </div>

@@ -74,3 +74,153 @@
     border-top: 1px solid #e2e8f0;
     padding-top: 25px;
 }
+
+/* ==========================================================================
+   SISTEMA DE INTERACCIONES (LIKES Y COMENTARIOS) - AÑADIDO
+   ========================================================================== */
+
+.interactions-section {
+    margin-top: 50px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 30px;
+}
+
+/* Contenedor de Likes */
+.likes-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 35px;
+}
+
+.btn-like {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    background-color: #64748b; /* Gris apagado si no hay like */
+    color: #ffffff;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn-like:hover {
+    background-color: #475569;
+}
+
+/* Clase dinámica cuando el usuario ya pulsó Like */
+.btn-like.has-liked {
+    background-color: #ef4444; /* Rojo para destacar el corazón */
+}
+
+.btn-like.has-liked:hover {
+    background-color: #dc2626;
+}
+
+.like-disabled-msg {
+    color: #64748b;
+    font-size: 0.95rem;
+    font-style: italic;
+}
+
+.likes-counter {
+    color: #334155;
+    font-size: 1rem;
+}
+
+/* Listado de Comentarios */
+.comments-list-wrapper h3,
+.add-comment-wrapper h3 {
+    color: #1e293b;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+}
+
+.comments-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+    margin-bottom: 35px;
+}
+
+.comment-card {
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.01);
+}
+
+.comment-metadata {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 8px;
+}
+
+.comment-author {
+    font-weight: 700;
+    color: #334155;
+}
+
+.comment-date {
+    font-variant-numeric: tabular-nums;
+}
+
+.comment-text {
+    margin: 0;
+    color: #334155;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.no-comments-msg {
+    color: #64748b;
+    font-style: italic;
+    margin: 15px 0 35px 0;
+}
+
+/* Formulario de Comentarios */
+.comment-form {
+    margin-top: 15px;
+}
+
+/* Aplicamos estilo a la clase comment-textarea que inyectamos en el form widget */
+.comment-textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #334155;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    resize: vertical;
+    min-height: 90px;
+}
+
+.comment-textarea:focus {
+    border-color: #1aa8da; /* Sincronizado con tu azul corporativo */
+    box-shadow: 0 0 0 3px rgba(26, 168, 218, 0.15);
+    outline: none;
+}
+
+/* Puerta de acceso para usuarios anónimos */
+.alert-anonymous-gate {
+    background-color: #fff7ed;
+    border: 1px solid #ffedd5;
+    color: #9a3412;
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.alert-anonymous-gate a {
+    color: #c2410c;
+    font-weight: 700;
+    text-decoration: underline;
+}

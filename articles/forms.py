@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 
-from articles.models import Article, Category, Tag
+from articles.models import Article, Category, Comment, Tag
 
 User = get_user_model()
 
@@ -46,3 +46,15 @@ class TagCreateForm(forms.ModelForm):
         fields = [
             'name'
         ]
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={
+                'rows': 3,
+                'class' : 'comment-textarea',
+                'placeholder': 'Escribe tu comentario aquí...'
+            }),
+        }
