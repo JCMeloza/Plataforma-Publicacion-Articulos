@@ -219,8 +219,8 @@ class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         article = self.get_object()
         return self.request.user == article.autor
     
-    def from_valid(self, form):
-        if form.instance.status == 'rejected':
+    def form_valid(self, form):
+        if form.instance.status == 'rejected' or form.instance.status == 'published':
             form.instance.status = 'draft'
 
         messages.success(self.request, "¡Artículo actualizado correctamente!")

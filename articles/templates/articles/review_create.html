@@ -1,7 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Crear Nuevo Artículo{% endblock %}
+{% block title %}
+    {% if form.instance.pk %}
+        Editar: {{ form.instance.title }}
+    {% else %}
+        Crear Nuevo Artículo
+    {% endblock %}
+{% endblock %}
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
@@ -11,10 +17,13 @@
 <div class="dashboard-container">
     
     <div class="dashboard-header">
-        <div>
-            <h1>✍ Crear Nuevo Artículo</h1>
-            <p>Escribe tu próxima gran publicación. El artículo se guardará inicialmente como borrador.</p>
-        </div>
+        {% if form.instance.pk %}
+                <h1>✏ Editar Artículo</h1>
+                <p>Modifica los campos necesarios de tu publicación.</p>
+            {% else %}
+                <h1>✍ Crear Nuevo Artículo</h1>
+                <p>Escribe tu próxima gran publicación. El artículo se guardará inicialmente como borrador.</p>
+            {% endif %}
         <a href="{% url 'work_dashboard' %}" class="btn-reject" style="text-decoration: none; padding: 10px 20px;">
             Volver al Escritorio
         </a>
@@ -66,7 +75,11 @@
 
             <div class="form-actions">
                 <button type="submit" class="btn-approve" style="padding: 12px 24px; font-size: 0.95rem;">
-                    Guardar como Borrador
+                    {% if form.instance.pk %}
+                        Guardar Cambios
+                    {% else %}
+                        Guardar como Borrador
+                    {% endif %}
                 </button>
                 <a href="{% url 'work_dashboard' %}" class="btn-cancel">
                     Cancelar

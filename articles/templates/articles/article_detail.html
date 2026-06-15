@@ -5,6 +5,7 @@
 
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/article.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -12,8 +13,8 @@
     
     {% if request.user == article.autor %}
         <div class="author-control-banner">
-            <span>ℹ Eres el autor de esta publicación (Estado actuales: <strong>{{ article.get_status_display }}</strong>).</span>
-            <a href="{% url 'article_edit' article.id %}" class="btn-update-role" style="text-decoration: none; background-color: #00adb5;">
+            <span>ℹ Eres el autor de esta publicación (Estado actual: <strong>{{ article.get_status_display }}</strong>).</span>
+            <a href="{% url 'article_edit' article.id %}" class="btn-update-role" >
                 ✏ Editar Artículo
             </a>
         </div>
