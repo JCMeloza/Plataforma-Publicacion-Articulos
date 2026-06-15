@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Crear Nuevo Artículo{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    
+    <div class="dashboard-header">
+        <div>
+            <h1>✍ Crear Nuevo Artículo</h1>
+            <p>Escribe tu próxima gran publicación. El artículo se guardará inicialmente como borrador.</p>
+        </div>
+        <a href="{% url 'work_dashboard' %}" class="btn-reject" style="text-decoration: none; padding: 10px 20px;">
+            Volver al Escritorio
+        </a>
+    </div>
+
+    <div class="table-container form-wrapper">
+        <form method="POST" enctype="multipart/form-data" class="crud-form">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Título del Artículo</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <span class="field-error">{{ form.title.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}">Categoría</label>
+                {{ form.category }}
+                {% if form.category.errors %}
+                    <span class="field-error">{{ form.category.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.image.id_for_label }}">Imagen de Portada</label>
+                {{ form.image }}
+                {% if form.image.errors %}
+                    <span class="field-error">{{ form.image.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.tags.id_for_label }}">Etiquetas (Tags)</label>
+                {{ form.tags }}
+                {% if form.tags.errors %}
+                    <span class="field-error">{{ form.tags.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}">Contenido del Artículo</label>
+                {{ form.content }}
+                {% if form.content.errors %}
+                    <span class="field-error">{{ form.content.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-approve" style="padding: 12px 24px; font-size: 0.95rem;">
+                    Guardar como Borrador
+                </button>
+                <a href="{% url 'work_dashboard' %}" class="btn-cancel">
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -50,8 +50,13 @@
     margin: 0;
 }
 
-.status-published { border-left: 5px solid #10b981; }
-.status-draft { border-left: 5px solid #f59e0b; }
+.status-published {
+    border-left: 5px solid #10b981;
+}
+
+.status-draft {
+    border-left: 5px solid #f59e0b;
+}
 
 /* Contenedor de la Tabla */
 .table-container {
@@ -104,8 +109,15 @@
     display: inline-block;
 }
 
-.badge-published { background-color: #d1fae5; color: #065f46; }
-.badge-draft { background-color: #fef3c7; color: #92400e; }
+.badge-published {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-draft {
+    background-color: #fef3c7;
+    color: #92400e;
+}
 
 .no-data {
     color: #64748b;
@@ -113,6 +125,7 @@
     padding: 30px 0;
     font-style: italic;
 }
+
 /* Margen superior para separar la tabla de usuarios de la de artículos */
 .table-users-spacing {
     margin-top: 40px;
@@ -192,32 +205,39 @@
 
 /* Pequeña animación para que aparezca suavemente */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Gris para los borradores del escritor */
-.badge-draft { 
-    background-color: #f1f5f9; 
-    color: #475569; 
+.badge-draft {
+    background-color: #f1f5f9;
+    color: #475569;
 }
 
 /* Azul o Amarillo para los que están esperando al editor */
-.badge-pending { 
-    background-color: #e0f2fe; 
-    color: #0369a1; 
+.badge-pending {
+    background-color: #e0f2fe;
+    color: #0369a1;
 }
 
 /* Verde para los artículos vivos en la web */
-.badge-published { 
-    background-color: #d1fae5; 
-    color: #065f46; 
+.badge-published {
+    background-color: #d1fae5;
+    color: #065f46;
 }
 
 /* Rojo para las publicaciones rechazadas */
-.badge-rejected { 
-    background-color: #fef2f2; 
-    color: #991b1b; 
+.badge-rejected {
+    background-color: #fef2f2;
+    color: #991b1b;
 }
 
 /* Contenedor de acciones del editor en la tabla */
@@ -241,7 +261,10 @@
     cursor: pointer;
     transition: background-color 0.2s;
 }
-.btn-approve:hover { background-color: #059669; }
+
+.btn-approve:hover {
+    background-color: #059669;
+}
 
 /* Botón de rechazar (Rojo) */
 .btn-reject {
@@ -256,4 +279,98 @@
     cursor: pointer;
     transition: background-color 0.2s;
 }
-.btn-reject:hover { background-color: #dc2626; }
+
+.btn-reject:hover {
+    background-color: #dc2626;
+}
+
+/* Contenedor estrecho para que el formulario no se estire demasiado en pantallas anchas */
+.form-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 30px;
+}
+
+/* Espaciado de cada bloque de campo */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+/* Estilo de las etiquetas (Labels) */
+.form-group label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+/* Estilo para todos los inputs, selectores y textareas que genera Django */
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #334155;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Efecto foco al hacer clic en un campo */
+.form-group input[type="text"]:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #00adb5;
+    box-shadow: 0 0 0 3px rgba(0, 173, 181, 0.1);
+    outline: none;
+}
+
+/* Altura especial para el editor de texto */
+.form-group textarea {
+    min-height: 200px;
+    resize: vertical;
+}
+
+/* Campo de subida de archivos */
+.form-group input[type="file"] {
+    padding: 8px 0;
+    font-family: inherit;
+}
+
+/* Mensajes de error específicos debajo del campo */
+.field-error {
+    color: #ef4444;
+    font-size: 0.8rem;
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+/* Contenedor inferior de botones */
+.form-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    margin-top: 30px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 20px;
+}
+
+/* Botón secundario para cancelar */
+.btn-cancel {
+    color: #64748b;
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.btn-cancel:hover {
+    color: #334155;
+    text-decoration: underline;
+}

@@ -16,7 +16,7 @@
         </div>
         
         {% if user.role == 'reviewer' %}
-            <a href="#" class="btn-update-role">✍ Escribir Artículo</a>
+            <a href="{% url 'review_create' %}" class="btn-update-role">✍ Escribir Artículo</a>
         {% endif %}
     </div>
 

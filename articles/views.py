@@ -2,7 +2,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView
 from .models import Article
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import CustomUserCreationForm, ChangeRoleForm
+from .forms import CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
@@ -96,3 +96,23 @@ class WorkDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
             return Article.objects.filter(status='pending').select_related('autor').order_by('-created_at')
         
         return Article.objects.none()
+
+class ReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+
+    template_name = 'articles/review_create.html'
+    model = Article
+    form_class = ReviewCreateForm
+    success_url = reverse_lazy('work_dashboard')
+
+    def test_func(self):
+        return self.request.user.role == 'reviewer'
+    
+    def form_valid(self, form):
+
+        form.instance.autor = self.request.user
+        messages.add_message(
+            self.request,
+            messages.SUCCESS,
+            "Articulo creado correctamente.",
+        )
+        return super(ReviewCreateView, self).form_valid(form)
