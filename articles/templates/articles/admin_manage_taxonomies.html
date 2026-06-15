@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Gestionar Atributos de Artículos{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div>
+            <h1>Configuración de la Revista</h1>
+            <p>Añade nuevos elementos taxonómicos para que los redactores puedan clasificarlos.</p>
+        </div>
+        <a href="{% url 'admin_dashboard' %}" class="btn-cancel">Volver al Panel Admin</a>
+    </div>
+
+    <div class="table-container form-wrapper">
+        <form method="POST" class="crud-form">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Nombre del nuevo elemento</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <span class="field-error">{{ form.name.errors.0 }}</span>
+                {% endif %}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-approve" style="padding: 12px 24px;">
+                    Guardar Elemento
+                </button>
+                <a href="{% url 'admin_dashboard' %}" class="btn-cancel">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

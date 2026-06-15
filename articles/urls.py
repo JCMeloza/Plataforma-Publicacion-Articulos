@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import AdminDashboardView, ArticleListView, ChangeUserRoleView, RegisterView, CustomLoginView, CustomLogoutView, ReviewCreateView, WorkDashboardView
+from .views import AdminDashboardView, ArticleListView, CategoryCreateView, ChangeUserRoleView, RegisterView, CustomLoginView, CustomLogoutView, ReviewCreateView, TagCreateView, WorkDashboardView
 
 urlpatterns = [
     path('', ArticleListView.as_view(), name='home'),
@@ -15,6 +15,8 @@ urlpatterns = [
     path('dashboard/admin/change-role/<int:user_id>/', ChangeUserRoleView.as_view(), name='change_role'),
     path('dashboard/workspace/', WorkDashboardView.as_view(), name='work_dashboard'),
 
-    path('dashboard/workspace/create/reviews/', ReviewCreateView.as_view(), name ='review_create')
+    path('dashboard/workspace/create/reviews/', ReviewCreateView.as_view(), name ='review_create'),
+    path('dashboard/admin/category/create/', CategoryCreateView.as_view(), name='category_create'),
+    path('dashboard/admin/tag/create/', TagCreateView.as_view(), name='tag_create'),
      
 ]

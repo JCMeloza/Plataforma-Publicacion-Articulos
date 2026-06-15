@@ -1,8 +1,8 @@
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, ListView, TemplateView
-from .models import Article
+from .models import Article, Category, Tag
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm
+from .forms import CategoryCreateForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
@@ -116,3 +116,34 @@ class ReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             "Articulo creado correctamente.",
         )
         return super(ReviewCreateView, self).form_valid(form)
+
+
+class CategoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    
+    template_name = 'articles/admin_manage_taxonomies.html'
+    model = Category
+    form_class = CategoryCreateForm
+    success_url = reverse_lazy('admin_dashboard')
+
+    def test_func(self):
+        return self.request.user.is_superuser
+    
+    def form_valid(self,form):
+        messages.success(self.request, f"Categoría '{form.instance.name}' creada con éxito.")
+        return super().form_valid(form)
+
+
+class TagCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+    
+    template_name = 'articles/admin_manage_taxonomies.html'
+    model = Tag
+    form_class = TagCreateForm
+    success_url = reverse_lazy('admin_dashboard')
+
+    def test_func(self):
+        return self.request.user.is_superuser
+    
+    def form_valid(self,form):
+        messages.success(self.request, f"Etiqueta '{form.instance.name}' creada con éxito.")
+        return super().form_valid(form)
+
