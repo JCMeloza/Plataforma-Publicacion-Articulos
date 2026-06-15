@@ -52,8 +52,8 @@ class AdminDashboardView(UserPassesTestMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['total_articles']= Article.objects.count()
-        context['published_articles'] = Article.objects.filter(status = 'published').count()
-        context['draft_articles'] = Article.objects.filter(status = 'draft').count()
+        context['published_count'] = Article.objects.filter(status = 'published').count()
+        context['draft_count'] = Article.objects.filter(status = 'draft').count()
         context['recent_articles'] = Article.objects.select_related('autor', 'category').order_by('-created_at')[:5]
         context ['users_list'] = User.objects.filter(is_superuser=False).order_by('username')
         return context
