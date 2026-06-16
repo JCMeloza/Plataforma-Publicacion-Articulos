@@ -15,6 +15,7 @@ body {
     margin: 30px auto; 
     padding: 0 15px;
     box-sizing: border-box;
+    margin-top: 80px; /* Ajuste para compensar la barra de navegación fija */
 }
 
 /* Barra de Navegación Superior */
@@ -26,6 +27,13 @@ header {
     justify-content: space-between; 
     align-items: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position:fixed;
+    top: 0;
+    left: 0;
+    width: 90%;
+    height: 60px;
+    z-index: 1000;
+    
 }
 
 header h2 {
