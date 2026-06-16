@@ -5,39 +5,45 @@
         <span></span>
     </label>
     <nav>
+        <a href="{% url 'home' %}">Inicio</a>
         <a href="{% url 'about' %}">Acerca de</a>
         <a href="{% url 'contact' %}">Contacto</a>
+        {% if user.is_authenticated %}
+            <a href="#">Comunidad</a>
+        {% endif %}
 
         <span class="nav-separator">|</span>
 
         {% if user.is_authenticated %}
-            <span>Hola, <strong>{{ user.username }}</strong> 
-                <small class="role-badge">
-                    {% if user.is_superuser %}
-                        (Administrador)
-                    {% else %}
-                        ({{ user.get_role_display }})
-                    {% endif %}
-                </small>
-            </span>
-            
-            {% if user.is_superuser %}
-                <a href="{% url 'admin_dashboard' %}" class="btn-dashboard-link">Panel Admin</a>
-            {% endif %}
-            {% if user.role == 'reviewer' or user.role == 'editor' %}
-                <a href="{% url 'work_dashboard' %}" class="btn-dashboard-link">Mi Escritorio</a>
-                
-            {% endif %}
-            {% if user.is_authenticated %}
-                <a href="{% url 'profile' %}">⚙ Mi Perfil</a>
-            {% endif %}
-
-            <form action="{% url 'logout' %}" method="POST" class="form-logout">
-                {% csrf_token %}
-                <button type="submit" class="btn-logout-submit">
-                    Salir
+            <div class="nav-dropdown">
+                <button class="dropdown-trigger">
+                    Hola, <strong>{{ user.username }}</strong> 
+                    <small class="role-badge">
+                        {% if user.is_superuser %}
+                            (Admin)
+                        {% else %}
+                            ({{ user.get_role_display }})
+                        {% endif %}
+                    </small>
+                    <span class="dropdown-arrow">▼</span>
                 </button>
-            </form>
+                <div class="dropdown-menu">
+                    {% if user.is_superuser %}
+                        <a href="{% url 'admin_dashboard' %}" class="dropdown-item">Panel Admin</a>
+                    {% endif %}
+                    {% if user.role == 'reviewer' or user.role == 'editor' %}
+                        <a href="{% url 'work_dashboard' %}" class="dropdown-item">Mi Escritorio</a>
+                    {% endif %}
+                    <a href="{% url 'profile' %}" class="dropdown-item">⚙ Mi Perfil</a>
+                    <hr class="dropdown-divider">
+                    <form action="{% url 'logout' %}" method="POST" class="form-logout">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-logout-submit dropdown-item logout-item">
+                            Salir
+                        </button>
+                    </form>
+                </div>
+            </div>
         {% else %}
             <a href="{% url 'login' %}">Entrar</a>
             <a href="{% url 'registro' %}">Registrarse</a>
