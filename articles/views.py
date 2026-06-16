@@ -1,10 +1,11 @@
+from ast import If
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
 from .models import Article, Category, Like, Tag
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm
+from .forms import CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm, UserProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.contrib.auth import get_user_model
 from django.contrib import messages
@@ -269,3 +270,19 @@ class LikeArticleView(LoginRequiredMixin, View):
             messages.success(request, f"Has dado 'Me gusta' al artículo '{article.title}'.")
         return redirect('article_detail', pk=article.id)
         
+class ProfileView(LoginRequiredMixin, View):
+    template_name = 'articles/profile.html'
+
+    def get(self, request):
+        form = UserProfileForm(instance = request.user)
+        return render(request, self.template_name, {'form':form})
+
+    def post(self,request):
+        form = UserProfileForm(request.POST,request.FILES, instance= request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request,"¡Tu perfil se ha actualizado correctamente")
+            return redirect('profile')        
+        
+        messages.error(request, "Por favor, corrige los errores del formulario.")
+        return render(request, self.template_name, {'form': form})

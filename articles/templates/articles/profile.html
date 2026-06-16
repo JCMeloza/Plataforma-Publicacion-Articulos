@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mi Perfil{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    
+    <div class="dashboard-header">
+        <div>
+            <h1>⚙ Ajustes de Cuenta</h1>
+            <p>Gestiona tus datos personales y visualiza tus credenciales en la plataforma.</p>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="profile-layout-container">
+        
+        <div class="table-container pointer profile-card-sidebar">
+            <div class="profile-avatar-circle">
+                {% if request.user.avatar %}
+                    <img src="{{ request.user.avatar.url }}" alt="Avatar de {{ request.user.username }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                {% else %}
+                    {{ request.user.username|slice:":2"|upper }}
+                {% endif %}
+            </div>
+            <h2>@{{ request.user.username }}</h2>
+            <p>{{ request.user.email }}</p>
+            
+            <span class="profile-role-badge">
+                Rol: {{ request.user.get_role_display }}
+            </span>
+        </div>
+
+        <div class="table-container form-wrapper profile-form-main">
+            <h2>Información Personal</h2>
+            
+            <form method="POST" enctype="multipart/form-data" class="crud-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}">Nombre de Usuario (Alias)</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <span class="field-error">{{ form.username.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Correo Electrónico</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <span class="field-error">{{ form.email.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.avatar.id_for_label }}">Foto de Perfil (Avatar)</label>
+                    {{ form.avatar }}
+                    {% if form.avatar.errors %}
+                        <span class="field-error">{{ form.avatar.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.bio.id_for_label }}">Biografía / Descripción</label>
+                    {{ form.bio }}
+                    {% if form.bio.errors %}
+                        <span class="field-error">{{ form.bio.errors.0 }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-approve">
+                        Actualizar Datos
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
