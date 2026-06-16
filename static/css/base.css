@@ -32,7 +32,7 @@ body {
 /* ==========================================================================
    BARRA DE NAVEGACIÓN SUPERIOR (RESPONSIVE & MOBILE-FIRST)
    ========================================================================== */
-header { 
+.main-header { 
     background: #1a1a1a; 
     color: #fff; 
     padding: 15px 20px; 
@@ -48,19 +48,19 @@ header {
     flex-wrap: wrap;
 }
 
-header h2 {
+.main-header h2 {
     margin: 0;
     font-size: 1.3rem;
     font-weight: 700;
 }
 
-header a { 
+.main-header a { 
     color: #fff; 
     text-decoration: none; 
     transition: color 0.2s ease;
 }
 
-header a:hover {
+.main-header a:hover {
     color: #00adb5;
 }
 
@@ -120,7 +120,7 @@ header a:hover {
 }
 
 /* Menú de Navegación */
-header nav {
+.main-header nav {
     display: none;
     flex-direction: column;
     width: 100%;
@@ -142,14 +142,14 @@ header nav {
 }
 
 /* Enlaces y textos dentro de la navegación */
-header nav a,
-header nav span {
+.main-header nav a,
+.main-header nav span {
     font-size: 0.95rem;
     width: 100%;
     display: block;
 }
 
-header nav span {
+.main-header nav span {
     color: #ccc;
     background: #2d2d2d;
     padding: 8px 12px;
@@ -213,12 +213,12 @@ header nav span {
    DESKTOP MEDIA QUERIES (768px y superiores)
    ========================================================================== */
 @media (min-width: 768px) {
-    header {
+    .main-header {
         padding: 15px 5%;
         flex-wrap: nowrap;
     }
 
-    header h2 {
+    .main-header h2 {
         font-size: 1.4rem;
     }
 
@@ -226,7 +226,7 @@ header nav span {
         display: none;
     }
 
-    header nav {
+    .main-header nav {
         display: flex;
         flex-direction: row;
         width: auto;
@@ -237,13 +237,13 @@ header nav span {
         gap: 20px;
     }
 
-    header nav a,
-    header nav span {
+    .main-header nav a,
+    .main-header nav span {
         width: auto;
         display: inline;
     }
 
-    header nav span {
+    .main-header nav span {
         padding: 5px 10px;
     }
 
