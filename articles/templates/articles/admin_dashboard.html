@@ -10,17 +10,17 @@
 {% block content %}
 <div class="dashboard-container">
     
-    <div class="dashboard-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
-        <div>
+    <div class="dashboard-header">
+        <div class="dashboard-title-group">
             <h1>Centro de Control de la Revista</h1>
             <p>Bienvenido, Administrador Principal. Aquí tienes el estado global de las publicaciones.</p>
         </div>
         
-        <div class="editor-actions-group" style="display: flex; gap: 10px;">
-            <a href="{% url 'category_create' %}" class="btn-update-role" style="text-decoration: none; background-color: #334155; padding: 10px 15px;">
+        <div class="editor-actions-group">
+            <a href="{% url 'category_create' %}" class="btn-update-role btn-category-create">
                 + Nueva Categoría
             </a>
-            <a href="{% url 'tag_create' %}" class="btn-update-role" style="text-decoration: none; background-color: #64748b; padding: 10px 15px;">
+            <a href="{% url 'tag_create' %}" class="btn-update-role btn-tag-create">
                 + Nueva Etiqueta
             </a>
         </div>
@@ -67,15 +67,15 @@
                 <tbody>
                     {% for article in recent_articles %}
                         <tr>
-                            <td><strong>{{ article.title }}</strong></td>
-                            <td>{{ article.autor.username }}</td>
-                            <td>{{ article.category.name }}</td>
-                            <td>
+                            <td data-label="Título"><strong>{{ article.title }}</strong></td>
+                            <td data-label="Autor">{{ article.autor.username }}</td>
+                            <td data-label="Categoría">{{ article.category.name }}</td>
+                            <td data-label="Estado">
                                 <span class="badge badge-{{ article.status }}">
                                     {{ article.get_status_display }}
                                 </span>
                             </td>
-                            <td>{{ article.created_at|date:"d/m/Y H:i" }}</td>
+                            <td data-label="Fecha">{{ article.created_at|date:"d/m/Y H:i" }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -100,14 +100,14 @@
                 <tbody>
                     {% for u in users_list %}
                         <tr>
-                            <td><strong>{{ u.username }}</strong></td>
-                            <td>{{ u.email }}</td>
-                            <td>
+                            <td data-label="Usuario"><strong>{{ u.username }}</strong></td>
+                            <td data-label="Email">{{ u.email }}</td>
+                            <td data-label="Rol Actual">
                                 <span class="badge badge-draft">
                                     {{ u.get_role_display }}
                                 </span>
                             </td>
-                            <td>
+                            <td class="td-actions">
                                 <form action="{% url 'change_role' u.id %}" method="POST" class="form-change-role">
                                     {% csrf_token %}
                                     <select name="role" class="select-role">

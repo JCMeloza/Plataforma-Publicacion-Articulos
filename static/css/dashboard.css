@@ -1,50 +1,78 @@
 /* ==========================================================================
-   ESTILOS DEL DASHBOARD ADMINISTRATIVO
+   ESTILOS DEL DASHBOARD ADMINISTRATIVO Y DE TRABAJO - MOBILE-FIRST
    ========================================================================== */
 
 .dashboard-container {
-    padding: 20px 0;
+    padding: 15px 0;
+}
+
+@media (min-width: 768px) {
+    .dashboard-container {
+        padding: 20px 0;
+    }
 }
 
 .dashboard-header {
-    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 30px;
+    align-items: flex-start;
 }
 
 .dashboard-header h1 {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     color: #1a1a1a;
-    margin-bottom: 8px;
+    margin: 0 0 8px 0;
 }
 
 .dashboard-header p {
     color: #64748b;
-    font-size: 1.1rem;
+    font-size: 1rem;
+    margin: 0;
+}
+
+@media (min-width: 768px) {
+    .dashboard-header {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 40px;
+    }
+    
+    .dashboard-header h1 {
+        font-size: 2.2rem;
+    }
+    
+    .dashboard-header p {
+        font-size: 1.1rem;
+    }
 }
 
 /* Rejilla de tarjetas de estadísticas */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 25px;
-    margin-bottom: 40px;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
 .stat-card {
     background: #ffffff;
-    padding: 25px;
+    padding: 20px;
     border-radius: 8px;
     border: 1px solid #eef2f5;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
 }
 
 .stat-card h3 {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #475569;
     margin: 0 0 10px 0;
 }
 
 .stat-card .stat-number {
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     font-weight: 700;
     color: #1a1a1a;
     margin: 0;
@@ -58,46 +86,203 @@
     border-left: 5px solid #f59e0b;
 }
 
+@media (min-width: 768px) {
+    .stats-grid {
+        gap: 25px;
+        margin-bottom: 40px;
+    }
+    
+    .stat-card {
+        padding: 25px;
+    }
+    
+    .stat-card h3 {
+        font-size: 1rem;
+    }
+    
+    .stat-card .stat-number {
+        font-size: 2.5rem;
+    }
+}
+
 /* Contenedor de la Tabla */
 .table-container {
     background: #ffffff;
-    padding: 30px;
+    padding: 20px;
     border-radius: 8px;
     border: 1px solid #eef2f5;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
 }
 
 .table-container h2 {
-    font-size: 1.4rem;
+    font-size: 1.25rem;
     color: #1a1a1a;
     margin-top: 0;
     margin-bottom: 20px;
 }
 
+/* Default Mobile: Card-based layout for tables */
 .dashboard-table {
     width: 100%;
-    border-collapse: collapse;
-    text-align: left;
+    display: block;
 }
 
-.dashboard-table th {
-    background-color: #f8fafc;
-    color: #475569;
-    font-weight: 600;
-    padding: 14px;
-    border-bottom: 2px solid #e2e8f0;
-    font-size: 0.9rem;
+.dashboard-table thead {
+    display: none;
+}
+
+.dashboard-table tbody {
+    display: block;
+    width: 100%;
+}
+
+.dashboard-table tr {
+    display: block;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.01);
 }
 
 .dashboard-table td {
-    padding: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
     border-bottom: 1px solid #f1f5f9;
-    color: #334155;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
+    text-align: right;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.dashboard-table tr:hover {
-    background-color: #f8fafc;
+.dashboard-table td:last-child,
+.dashboard-table td.td-actions {
+    border-bottom: none;
+    padding-bottom: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    text-align: center;
+}
+
+.dashboard-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: #475569;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.dashboard-table td.td-actions::before {
+    content: "Acciones";
+    margin-bottom: 5px;
+    align-self: flex-start;
+}
+
+/* Botones y formularios en móvil dentro de la tabla */
+.dashboard-table td.td-actions .editor-actions-group,
+.dashboard-table td.td-actions .form-change-role {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.dashboard-table td.td-actions button,
+.dashboard-table td.td-actions a,
+.dashboard-table td.td-actions select {
+    width: 100% !important;
+    box-sizing: border-box;
+    text-align: center;
+    margin: 0 !important;
+}
+
+/* Desktop styles: Standard table layout */
+@media (min-width: 768px) {
+    .table-container {
+        padding: 30px;
+    }
+    
+    .table-container h2 {
+        font-size: 1.4rem;
+    }
+    
+    .dashboard-table {
+        display: table;
+        border-collapse: collapse;
+    }
+    
+    .dashboard-table thead {
+        display: table-header-group;
+    }
+    
+    .dashboard-table tbody {
+        display: table-row-group;
+    }
+    
+    .dashboard-table tr {
+        display: table-row;
+        background: none;
+        border: none;
+        border-radius: 0;
+        padding: 0;
+        margin-bottom: 0;
+        box-shadow: none;
+    }
+    
+    .dashboard-table tr:hover {
+        background-color: #f8fafc;
+    }
+    
+    .dashboard-table th {
+        display: table-cell;
+        background-color: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+        padding: 14px;
+        border-bottom: 2px solid #e2e8f0;
+        font-size: 0.9rem;
+    }
+    
+    .dashboard-table td {
+        display: table-cell;
+        padding: 14px;
+        border-bottom: 1px solid #f1f5f9;
+        color: #334155;
+        font-size: 0.95rem;
+        text-align: left;
+        width: auto;
+    }
+    
+    .dashboard-table td::before,
+    .dashboard-table td.td-actions::before {
+        content: none;
+    }
+    
+    .dashboard-table td:last-child,
+    .dashboard-table td.td-actions {
+        padding-bottom: 14px;
+        flex-direction: row;
+        align-items: center;
+        gap: 0;
+        text-align: left;
+    }
+    
+    .dashboard-table td.td-actions .editor-actions-group,
+    .dashboard-table td.td-actions .form-change-role {
+        width: auto;
+        flex-direction: row;
+        gap: 8px;
+    }
+    
+    .dashboard-table td.td-actions button,
+    .dashboard-table td.td-actions a,
+    .dashboard-table td.td-actions select {
+        width: auto !important;
+    }
 }
 
 /* Badges o etiquetas de estado */
@@ -109,16 +294,6 @@
     display: inline-block;
 }
 
-.badge-published {
-    background-color: #d1fae5;
-    color: #065f46;
-}
-
-.badge-draft {
-    background-color: #fef3c7;
-    color: #92400e;
-}
-
 .no-data {
     color: #64748b;
     text-align: center;
@@ -128,7 +303,13 @@
 
 /* Margen superior para separar la tabla de usuarios de la de artículos */
 .table-users-spacing {
-    margin-top: 40px;
+    margin-top: 30px;
+}
+
+@media (min-width: 768px) {
+    .table-users-spacing {
+        margin-top: 40px;
+    }
 }
 
 /* Alineación del formulario en la celda de la tabla */
@@ -162,19 +343,83 @@
     background-color: #00adb5;
     color: #ffffff;
     border: none;
-    padding: 6px 14px;
+    padding: 8px 16px;
     border-radius: 4px;
     font-family: inherit;
     font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: inline-block;
 }
 
 .btn-update-role:hover {
     background-color: #008c94;
 }
 
+/* Clases específicas para botones del Dashboard */
+.btn-category-create {
+    text-decoration: none;
+    background-color: #334155 !important;
+    width: 100%;
+    text-align: center;
+}
+
+.btn-category-create:hover {
+    background-color: #475569 !important;
+}
+
+.btn-tag-create {
+    text-decoration: none;
+    background-color: #64748b !important;
+    width: 100%;
+    text-align: center;
+}
+
+.btn-tag-create:hover {
+    background-color: #7b8c9f !important;
+}
+
+.btn-edit-action {
+    text-decoration: none;
+    background-color: #334155 !important;
+    text-align: center;
+}
+
+.btn-edit-action:hover {
+    background-color: #475569 !important;
+}
+
+.btn-send-review {
+    background-color: #0284c7 !important;
+    text-align: center;
+}
+
+.btn-send-review:hover {
+    background-color: #0369a1 !important;
+}
+
+.btn-back-dashboard {
+    text-decoration: none;
+    width: 100%;
+    text-align: center;
+}
+
+.form-action-inline {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+}
+
+@media (min-width: 768px) {
+    .btn-category-create,
+    .btn-tag-create,
+    .btn-back-dashboard {
+        width: auto;
+    }
+}
+
+/* Mensajes de feedback */
 .messages-container {
     margin-bottom: 25px;
 }
@@ -189,52 +434,45 @@
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Estilo específico para cuando el mensaje es de tipo 'success' (éxito) */
 .alert-success {
     background-color: #ecfdf5;
     color: #065f46;
     border: 1px solid #a7f3d0;
 }
 
-/* Estilo específico para cuando es de tipo 'error' */
 .alert-error {
     background-color: #fef2f2;
     color: #991b1b;
     border: 1px solid #fca5a5;
 }
 
-/* Pequeña animación para que aparezca suavemente */
 @keyframes fadeIn {
     from {
         opacity: 0;
         transform: translateY(-10px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-/* Gris para los borradores del escritor */
+/* Badges específicos */
 .badge-draft {
     background-color: #f1f5f9;
     color: #475569;
 }
 
-/* Azul o Amarillo para los que están esperando al editor */
 .badge-pending {
     background-color: #e0f2fe;
     color: #0369a1;
 }
 
-/* Verde para los artículos vivos en la web */
 .badge-published {
     background-color: #d1fae5;
     color: #065f46;
 }
 
-/* Rojo para las publicaciones rechazadas */
 .badge-rejected {
     background-color: #fef2f2;
     color: #991b1b;
@@ -248,57 +486,61 @@
     padding: 0;
 }
 
-/* Botón de aprobar (Verde) */
 .btn-approve {
     background-color: #10b981;
     color: #ffffff;
     border: none;
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 4px;
     font-family: inherit;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: inline-block;
 }
 
 .btn-approve:hover {
     background-color: #059669;
 }
 
-/* Botón de rechazar (Rojo) */
 .btn-reject {
     background-color: #ef4444;
     color: #ffffff;
     border: none;
-    padding: 6px 10px;
+    padding: 8px 12px;
     border-radius: 4px;
     font-family: inherit;
     font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
+    display: inline-block;
 }
 
 .btn-reject:hover {
     background-color: #dc2626;
 }
 
-/* Contenedor estrecho para que el formulario no se estire demasiado en pantallas anchas */
+/* Contenedor del formulario del CRUD */
 .form-wrapper {
     max-width: 800px;
     margin: 0 auto;
-    padding: 30px;
+    padding: 20px;
 }
 
-/* Espaciado de cada bloque de campo */
+@media (min-width: 768px) {
+    .form-wrapper {
+        padding: 30px;
+    }
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
     margin-bottom: 20px;
 }
 
-/* Estilo de las etiquetas (Labels) */
 .form-group label {
     font-size: 0.9rem;
     font-weight: 600;
@@ -306,7 +548,6 @@
     margin-bottom: 8px;
 }
 
-/* Estilo para todos los inputs, selectores y textareas que genera Django */
 .form-group input[type="text"],
 .form-group select,
 .form-group textarea {
@@ -322,7 +563,6 @@
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Efecto foco al hacer clic en un campo */
 .form-group input[type="text"]:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -331,19 +571,16 @@
     outline: none;
 }
 
-/* Altura especial para el editor de texto */
 .form-group textarea {
     min-height: 200px;
     resize: vertical;
 }
 
-/* Campo de subida de archivos */
 .form-group input[type="file"] {
     padding: 8px 0;
     font-family: inherit;
 }
 
-/* Mensajes de error específicos debajo del campo */
 .field-error {
     color: #ef4444;
     font-size: 0.8rem;
@@ -351,17 +588,37 @@
     font-weight: 500;
 }
 
-/* Contenedor inferior de botones */
+/* Contenedor inferior de botones de formulario */
 .form-actions {
     display: flex;
+    flex-direction: column;
     gap: 15px;
-    align-items: center;
-    margin-top: 30px;
+    align-items: stretch;
+    margin-top: 20px;
     border-top: 1px solid #e2e8f0;
     padding-top: 20px;
 }
 
-/* Botón secundario para cancelar */
+.form-actions .btn-approve,
+.form-actions .btn-cancel {
+    width: 100%;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .form-actions {
+        flex-direction: row;
+        gap: 15px;
+        align-items: center;
+        margin-top: 30px;
+    }
+    
+    .form-actions .btn-approve,
+    .form-actions .btn-cancel {
+        width: auto;
+    }
+}
+
 .btn-cancel {
     color: #64748b;
     text-decoration: none;
@@ -379,28 +636,23 @@
    VISTA DE PERFIL DE USUARIO
    ========================================================================== */
 
-/* Contenedor del diseño partido (Tarjeta + Formulario) */
 .profile-layout-container {
     display: flex;
-    gap: 30px;
+    flex-direction: column;
+    gap: 20px;
     margin-top: 20px;
-    flex-wrap: wrap;
 }
 
-/* Tarjeta resumen de la izquierda */
 .profile-card-sidebar {
-    flex: 1;
-    min-width: 280px;
+    width: 100%;
     text-align: center;
-    padding: 40px 20px;
-    height: fit-content;
+    padding: 25px 15px;
 }
 
-/* Círculo con las iniciales del usuario (Avatar) */
 .profile-avatar-circle {
     width: 100px;
     height: 100px;
-    background-color: #1aa8da; /* Sincronizado con tu azul */
+    background-color: #1aa8da;
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -413,52 +665,94 @@
 }
 
 .profile-card-sidebar h2 {
-    margin: 0;
+    margin: 0 0 5px 0;
     color: #1e293b;
-    font-size: 1.5rem;
+    font-size: 1.4rem;
 }
 
 .profile-card-sidebar p {
     color: #64748b;
-    font-size: 0.95rem;
-    margin-bottom: 20px;
+    font-size: 0.9rem;
+    margin: 0 0 15px 0;
 }
 
-/* El badge que muestra el Rol dentro de la tarjeta */
 .profile-role-badge {
     background-color: #1e293b;
     color: #ffffff;
     padding: 6px 16px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     border-radius: 20px;
     font-weight: 600;
     display: inline-block;
 }
 
-/* Bloque contenedor del formulario de la derecha */
 .profile-form-main {
-    flex: 2;
-    min-width: 320px;
+    width: 100%;
     margin: 0;
-    padding: 30px;
+    padding: 20px 15px;
 }
 
 .profile-form-main h2 {
+    margin-top: 0;
     margin-bottom: 25px;
     border-bottom: 1px solid #e2e8f0;
     padding-bottom: 10px;
     color: #1e293b;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
 }
 
-/* Contenedor flex para agrupar campos en la misma línea (Nombre y Apellidos) */
 .form-row-combined {
     display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 0;
 }
 
 .form-row-combined .form-group {
-    flex: 1;
-    min-width: 140px;
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .profile-layout-container {
+        flex-direction: row;
+        gap: 30px;
+    }
+    
+    .profile-card-sidebar {
+        flex: 1;
+        min-width: 280px;
+        padding: 40px 20px;
+    }
+    
+    .profile-card-sidebar h2 {
+        font-size: 1.5rem;
+    }
+    
+    .profile-card-sidebar p {
+        font-size: 0.95rem;
+        margin-bottom: 20px;
+    }
+    
+    .profile-role-badge {
+        font-size: 0.85rem;
+    }
+    
+    .profile-form-main {
+        flex: 2;
+        min-width: 320px;
+        padding: 30px;
+    }
+    
+    .profile-form-main h2 {
+        font-size: 1.4rem;
+    }
+    
+    .form-row-combined {
+        flex-direction: row;
+        gap: 15px;
+    }
+    
+    .form-row-combined .form-group {
+        flex: 1;
+        min-width: 140px;
+    }
 }

@@ -52,30 +52,30 @@
                 <tbody>
                     {% for article in articles %}
                         <tr>
-                            <td><strong>{{ article.title }}</strong></td>
+                            <td data-label="Título"><strong>{{ article.title }}</strong></td>
                             {% if user.role == 'editor' %}
-                                <td>{{ article.autor.username }}</td>
+                                <td data-label="Autor">{{ article.autor.username }}</td>
                             {% endif %}
-                            <td>{{ article.created_at|date:"d M Y" }}</td>
-                            <td>
+                            <td data-label="Fecha">{{ article.created_at|date:"d M Y" }}</td>
+                            <td data-label="Estado">
                                 <span class="badge badge-{{ article.status }}">
                                     {{ article.get_status_display }}
                                 </span>
                             </td>
-                            <td>
+                            <td class="td-actions">
                                 {% if user.role == 'reviewer' %}
                                     <div class="editor-actions-group">
-                                        <a href="{% url 'article_detail' article.id %}" class="btn-update-role" style="text-decoration: none; background-color: #334155;">Editar</a>
+                                        <a href="{% url 'article_detail' article.id %}" class="btn-update-role btn-edit-action">Editar</a>
             
                                         {% if article.status == 'draft' or article.status == 'rejected' %}
-                                            <form action="{% url 'send_to_review' article.id %}" method="POST" style="margin: 0; padding: 0;">
+                                            <form action="{% url 'send_to_review' article.id %}" method="POST" class="form-action-inline">
                                                 {% csrf_token %}
-                                                <button type="submit" class="btn-approve" style="background-color: #0284c7;">
+                                                <button type="submit" class="btn-approve btn-send-review">
                                                     🚀 Enviar a Revisión
                                                 </button>
                                             </form>
                                         {% endif %}
-                                            </div>
+                                    </div>
                                         {% elif user.role == 'editor' %}
                                             <div class="editor-actions-group">
                                                 <form action="{% url 'approve_article' article.id %}" method="POST">

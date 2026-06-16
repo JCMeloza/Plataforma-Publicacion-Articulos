@@ -1,9 +1,13 @@
+/* ==========================================================================
+   ESTILOS DE LA PÁGINA DE CONTACTO Y FORMULARIOS DE ACCESO - MOBILE-FIRST
+   ========================================================================== */
+
 /* Contenedor del formulario */
 .contact-container { 
     max-width: 550px; 
-    margin: 40px auto; 
+    margin: 20px auto; 
     background: #ffffff; 
-    padding: 40px; 
+    padding: 25px 20px; 
     border-radius: 10px; 
     box-shadow: 0 4px 20px rgba(0,0,0,0.06); 
     border: 1px solid #eef2f5; 
@@ -13,20 +17,20 @@
     text-align: center; 
     color: #222; 
     margin-bottom: 10px; 
-    font-size: 2rem; 
+    font-size: 1.6rem; 
 }
 
 .contact-container .subtitle { 
     text-align: center; 
     color: #777; 
-    margin-bottom: 30px; 
-    font-size: 0.95rem; 
+    margin-bottom: 25px; 
+    font-size: 0.9rem; 
     line-height: 1.4;
 }
 
 /* Grupos de campos del formulario */
 .form-group { 
-    margin-bottom: 22px; 
+    margin-bottom: 20px; 
 }
 
 .form-group label { 
@@ -34,7 +38,7 @@
     font-weight: 600; 
     margin-bottom: 8px; 
     color: #444; 
-    font-size: 0.88rem; 
+    font-size: 0.85rem; 
 }
 
 /* Cajas de entrada de texto (Inputs y Textarea) */
@@ -43,7 +47,7 @@
     padding: 12px 15px; 
     border: 1px solid #cbd5e1; 
     border-radius: 6px; 
-    font-size: 0.98rem; 
+    font-size: 0.95rem; 
     box-sizing: border-box; 
     background-color: #f8fafc;
     transition: border-color 0.2s, background-color 0.2s; 
@@ -62,7 +66,7 @@
     color: #ffffff; 
     border: none; 
     padding: 14px; 
-    font-size: 1rem; 
+    font-size: 0.95rem; 
     font-weight: bold; 
     border-radius: 6px; 
     cursor: pointer; 
@@ -76,4 +80,35 @@
 
 .btn-submit:active {
     transform: scale(0.98);
+}
+
+/* ==========================================================================
+   DESKTOP MEDIA QUERIES (768px y superiores)
+   ========================================================================== */
+@media (min-width: 768px) {
+    .contact-container { 
+        margin: 40px auto; 
+        padding: 40px; 
+    }
+
+    .contact-container h2 { 
+        font-size: 2rem; 
+    }
+
+    .contact-container .subtitle { 
+        font-size: 0.95rem; 
+        margin-bottom: 30px; 
+    }
+
+    .form-group label { 
+        font-size: 0.88rem; 
+    }
+
+    .form-control { 
+        font-size: 0.98rem; 
+    }
+
+    .btn-submit { 
+        font-size: 1rem; 
+    }
 }

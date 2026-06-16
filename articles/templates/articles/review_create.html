@@ -24,7 +24,7 @@
                 <h1>✍ Crear Nuevo Artículo</h1>
                 <p>Escribe tu próxima gran publicación. El artículo se guardará inicialmente como borrador.</p>
             {% endif %}
-        <a href="{% url 'work_dashboard' %}" class="btn-reject" style="text-decoration: none; padding: 10px 20px;">
+        <a href="{% url 'work_dashboard' %}" class="btn-reject btn-back-dashboard">
             Volver al Escritorio
         </a>
     </div>
@@ -74,7 +74,7 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-approve" style="padding: 12px 24px; font-size: 0.95rem;">
+                <button type="submit" class="btn-approve btn-save-article">
                     {% if form.instance.pk %}
                         Guardar Cambios
                     {% else %}
