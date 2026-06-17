@@ -1,11 +1,11 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import AddCommentView, AdminDashboardView, ApproveArticleView, ArticleDetailView, ArticleListView, ArticleUpdateView, CategoryCreateView, ChangeUserRoleView, LikeArticleView, ProfileDetailView, ProfileListView, ProfileView, RegisterView, CustomLoginView, CustomLogoutView, RejectArticleView, ReviewCreateView, SendToReviewView, TagCreateView, WorkDashboardView
+from .views import AddCommentView, AdminDashboardView, ApproveArticleView, ArticleDetailView, ArticleListView, ArticleUpdateView, CategoryCreateView, ChangeUserRoleView, ContactView, InboxView, LikeArticleView, MessageDetailView, ProfileDetailView, ProfileListView, ProfileView, RegisterView, CustomLoginView, CustomLogoutView, RejectArticleView, ReviewCreateView, SendToReviewView, TagCreateView, WorkDashboardView
 
 urlpatterns = [
     path('', ArticleListView.as_view(), name='home'),
     path('about/', TemplateView.as_view(template_name='general/acerca_de.html'), name='about'),
-    path('contact/', TemplateView.as_view(template_name='general/contacto.html'), name='contact'),
+    path('contact/', ContactView.as_view(), name='contact'),
 
     path('registro/', RegisterView.as_view(), name='registro'),
     path('login/', CustomLoginView.as_view(), name='login'),
@@ -32,5 +32,8 @@ urlpatterns = [
     path('dashboard/profile/', ProfileView.as_view(), name='profile'),
 
     path('dashboard/profile-list/', ProfileListView.as_view(), name='profile_list'),
-    path('dashboard/profile-list/<int:pk>/', ProfileDetailView.as_view(), name='profile_detail')
+    path('dashboard/profile-list/<int:pk>/', ProfileDetailView.as_view(), name='profile_detail'),
+    
+    path('dashboard/inbox/', InboxView.as_view(), name='inbox'),
+    path('dashboard/inbox/<int:pk>/', MessageDetailView.as_view(), name='message_detail'),
 ]

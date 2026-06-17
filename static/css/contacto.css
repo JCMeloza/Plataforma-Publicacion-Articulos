@@ -112,3 +112,57 @@
         font-size: 1rem; 
     }
 }
+
+/* Estilos para destinatarios en el formulario de contacto */
+.select-recipient {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background-color: #ffffff;
+    color: #334155;
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.input-readonly {
+    background-color: #f1f5f9;
+    cursor: not-allowed;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    font-family: inherit;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+/* Alertas y Mensajes de Feedback */
+.messages-container {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.alert {
+    padding: 15px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    box-sizing: border-box;
+}
+
+.alert-success {
+    background-color: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.alert-error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}

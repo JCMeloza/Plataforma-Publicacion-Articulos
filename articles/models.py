@@ -73,3 +73,29 @@ class Like(models.Model):
 
     class Meta:
         unique_together = ('article', 'user')
+
+class ContactMessage(models.Model):
+    remitente = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='sent_messages'
+    )
+    destinatario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='received_messages'
+    )
+    nombre = models.CharField(max_length=100)
+    email = models.EmailField()
+    asunto = models.CharField(max_length=200)
+    mensaje = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        dest = self.destinatario.username if self.destinatario else "Admin"
+        return f"Mensaje de {self.nombre} para {dest} - {self.asunto}"

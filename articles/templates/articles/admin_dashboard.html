@@ -128,5 +128,35 @@
             <p class="no-data">No hay usuarios comunes registrados todavía.</p>
         {% endif %}
     </div>
+
+    <div class="table-container table-users-spacing">
+        <h2>Mensajes de Contacto Recibidos</h2>
+        {% if contact_messages %}
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Email</th>
+                        <th>Asunto</th>
+                        <th>Mensaje</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in contact_messages %}
+                        <tr>
+                            <td data-label="Nombre"><strong>{{ msg.nombre }}</strong></td>
+                            <td data-label="Email"><a href="mailto:{{ msg.email }}">{{ msg.email }}</a></td>
+                            <td data-label="Asunto">{{ msg.asunto }}</td>
+                            <td data-label="Mensaje" style="text-align: left; max-width: 300px; word-wrap: break-word; white-space: pre-line;">{{ msg.mensaje }}</td>
+                            <td data-label="Fecha">{{ msg.created_at|date:"d/m/Y H:i" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data">No hay mensajes de contacto recibidos todavía.</p>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

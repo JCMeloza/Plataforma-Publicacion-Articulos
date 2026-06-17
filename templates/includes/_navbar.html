@@ -10,6 +10,14 @@
         <a href="{% url 'contact' %}">Contacto</a>
         {% if user.is_authenticated %}
             <a href="{% url 'profile_list' %}">Comunidad</a>
+            <a href="{% url 'inbox' %}" style="position: relative; display: inline-flex; align-items: center; gap: 4px;" id="nav-inbox-link">
+                📬 Mensajes
+                {% if unread_messages_count > 0 %}
+                    <span style="background-color: #ff4a4a; color: #ffffff; font-size: 0.75rem; font-weight: 700; padding: 2px 6px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; min-width: 18px; height: 18px;" id="unread-messages-badge">
+                        {{ unread_messages_count }}
+                    </span>
+                {% endif %}
+            </a>
         {% endif %}
 
         <span class="nav-separator">|</span>

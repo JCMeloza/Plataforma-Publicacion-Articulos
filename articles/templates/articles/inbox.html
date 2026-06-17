@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Bandeja de Entrada - Mi Revista{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=1.1">
+    <style>
+        .unread-row {
+            background-color: #f0fdfa !important;
+            font-weight: 600;
+        }
+        .unread-row:hover {
+            background-color: #ccfbf1 !important;
+        }
+        .clickable-row {
+            transition: background-color 0.2s;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <div>
+            <h1>📬 Bandeja de Entrada</h1>
+            <p>Aquí puedes leer los mensajes que te enviaron otros usuarios o visitantes de la plataforma.</p>
+        </div>
+    </div>
+
+    {% if messages %}
+        <div class="messages-container">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="table-container">
+        <h2>Mensajes Recibidos</h2>
+        {% if messages_list %}
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Estado</th>
+                        <th>De</th>
+                        <th>Asunto</th>
+                        <th>Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for msg in messages_list %}
+                        <tr onclick="window.location.href='{% url 'message_detail' msg.id %}'" class="clickable-row {% if not msg.is_read %}unread-row{% endif %}" style="cursor: pointer;">
+                            <td data-label="Estado">
+                                {% if not msg.is_read %}
+                                    <span class="badge badge-pending">Nuevo</span>
+                                {% else %}
+                                    <span class="badge badge-draft">Leído</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="De">
+                                <strong>{{ msg.nombre }}</strong> <span style="font-size: 0.8rem; color: #64748b; font-weight: normal;">&lt;{{ msg.email }}&gt;</span>
+                            </td>
+                            <td data-label="Asunto">
+                                {{ msg.asunto }}
+                            </td>
+                            <td data-label="Fecha">
+                                {{ msg.created_at|date:"d/m/Y H:i" }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data">No tienes ningún mensaje en tu bandeja de entrada.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

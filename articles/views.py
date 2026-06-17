@@ -1,7 +1,7 @@
 from ast import If
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
-from .models import Article, Category, Like, Tag
+from .models import Article, Category, Like, Tag, ContactMessage
 from django.contrib.auth.views import LoginView, LogoutView
 from .forms import CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm, UserProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -10,6 +10,7 @@ from django.views import View
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.utils.text import slugify
+from django.db.models import Q
 User = get_user_model()
 class ArticleListView(ListView):
     model = Article
@@ -57,6 +58,7 @@ class AdminDashboardView(UserPassesTestMixin, TemplateView):
         context['draft_count'] = Article.objects.filter(status = 'draft').count()
         context['recent_articles'] = Article.objects.select_related('autor', 'category').order_by('-created_at')[:5]
         context ['users_list'] = User.objects.filter(is_superuser=False).order_by('username')
+        context['contact_messages'] = ContactMessage.objects.order_by('-created_at')
         return context
     
 class ChangeUserRoleView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -312,5 +314,80 @@ class ProfileDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
         context['commented_articles_count'] = self.object.comment_set.count()
         context['total_likes_count'] = Like.objects.filter(article__autor=self.object).count()
         return context
+
+class ContactView(View):
+    template_name = 'general/contacto.html'
+
+    def get(self, request):
+        context = {}
+        if request.user.is_authenticated:
+            context['users'] = User.objects.exclude(id=request.user.id).order_by('username')
+            to_user_id = request.GET.get('to')
+            if to_user_id:
+                context['selected_user'] = get_object_or_404(User, id=to_user_id)
+            
+            # Capturar asunto si viene por parámetro (ej. responder mensaje)
+            asunto = request.GET.get('asunto')
+            if asunto:
+                context['selected_asunto'] = asunto
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        nombre = request.POST.get('nombre')
+        email = request.POST.get('email')
+        asunto = request.POST.get('asunto')
+        mensaje = request.POST.get('mensaje')
+
+        remitente = None
+        destinatario = None
         
-        
+        if request.user.is_authenticated:
+            remitente = request.user
+            nombre = request.user.username
+            email = request.user.email
+            destinatario_id = request.POST.get('destinatario')
+            if destinatario_id:
+                destinatario = get_object_or_404(User, id=destinatario_id)
+
+        ContactMessage.objects.create(
+            remitente=remitente,
+            destinatario=destinatario,
+            nombre=nombre,
+            email=email,
+            asunto=asunto,
+            mensaje=mensaje
+        )
+
+        messages.success(request, "¡Tu mensaje ha sido enviado con éxito!")
+        return redirect('contact')
+
+class InboxView(LoginRequiredMixin, ListView):
+    template_name = 'articles/inbox.html'
+    context_object_name = 'messages_list'
+    model = ContactMessage
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return ContactMessage.objects.filter(
+                Q(destinatario=self.request.user) | Q(destinatario__isnull=True)
+            ).order_by('-created_at')
+        return ContactMessage.objects.filter(destinatario=self.request.user).order_by('-created_at')
+
+class MessageDetailView(LoginRequiredMixin, DetailView):
+    template_name = 'articles/message_detail.html'
+    context_object_name = 'msg'
+    model = ContactMessage
+
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return ContactMessage.objects.filter(
+                Q(destinatario=self.request.user) | Q(destinatario__isnull=True)
+            )
+        return ContactMessage.objects.filter(destinatario=self.request.user)
+
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset)
+        if not obj.is_read:
+            obj.is_read = True
+            obj.save()
+        return obj

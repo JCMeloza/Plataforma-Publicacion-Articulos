@@ -14,76 +14,82 @@
             <h1>👤 Perfil de Usuario</h1>
             <p>Detalles públicos y estadísticas del colaborador en la plataforma.</p>
         </div>
-        <a href="{% url 'profile_list' %}" class="btn-cancel" id="btn-back-to-list" style="margin-top: 10px; display: inline-flex; align-items: center; gap: 8px;">
+        <a href="{% url 'profile_list' %}" class="btn-cancel btn-back-list" id="btn-back-to-list">
             ← Volver a la lista
         </a>
     </div>
 
     <div class="profile-layout-container">
         <!-- Tarjeta de Perfil -->
-        <div class="table-container profile-card-sidebar" style="max-width: 400px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; text-align: center;">
+        <div class="table-container profile-detail-card">
             <div class="profile-avatar-circle">
                 {% if profile_user.avatar %}
-                    <img src="{{ profile_user.avatar.url }}" alt="Avatar de {{ profile_user.username }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                    <img src="{{ profile_user.avatar.url }}" alt="Avatar de {{ profile_user.username }}" class="profile-avatar-img">
                 {% else %}
                     {{ profile_user.username|slice:":2"|upper }}
                 {% endif %}
             </div>
-            <h2 style="margin: 15px 0 5px 0; color: #1e293b; font-size: 1.4rem;">@{{ profile_user.username }}</h2>
-            <p style="color: #64748b; font-size: 0.95rem; margin-bottom: 20px;">{{ profile_user.email }}</p>
+            <h2 class="profile-username">@{{ profile_user.username }}</h2>
+            <p class="profile-email">{{ profile_user.email }}</p>
             
-            <span class="profile-role-badge" style="margin-bottom: 20px;">
+            <span class="profile-role-badge badge-spaced">
                 Rol: {{ profile_user.get_role_display }}
             </span>
+
+            {% if request.user.is_authenticated and request.user.id != profile_user.id %}
+                <a href="{% url 'contact' %}?to={{ profile_user.id }}" class="btn-update-role btn-dm-action">
+                    💬 Enviar Mensaje Directo
+                </a>
+            {% endif %}
             
             {% if profile_user.bio %}
-                <div style="border-top: 1px solid #e2e8f0; padding-top: 15px; margin-top: 15px; text-align: left; width: 100%;">
-                    <h4 style="margin: 0 0 8px 0; color: #334155; font-size: 0.95rem;">Biografía</h4>
-                    <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0;">{{ profile_user.bio }}</p>
+                <div class="profile-bio-container">
+                    <h4 class="profile-bio-title">Biografía</h4>
+                    <p class="profile-bio-text">{{ profile_user.bio }}</p>
                 </div>
             {% endif %}
         </div>
 
         <!-- Estadísticas y Actividad -->
-        <div class="table-container profile-form-main" style="flex: 2; padding: 30px;">
-            <h2 style="margin-top: 0; margin-bottom: 25px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; color: #1e293b; font-size: 1.4rem;">Estadísticas de Actividad</h2>
+        <div class="table-container profile-stats-container">
+            <h2 class="profile-stats-title">Estadísticas de Actividad</h2>
             
-            <div class="stats-grid" style="margin-top: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                <div class="stat-card" style="border-left: 5px solid #00adb5; background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #eef2f5; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);">
-                    <h3 style="font-size: 0.95rem; color: #475569; margin: 0 0 10px 0;">Artículos Publicados</h3>
-                    <p class="stat-number" style="font-size: 2.2rem; font-weight: 700; color: #1a1a1a; margin: 0;">{{ authored_articles_count }}</p>
+            <div class="profile-stats-grid">
+                <div class="profile-stat-card stat-cyan">
+                    <h3>Artículos Publicados</h3>
+                    <p class="stat-number">{{ authored_articles_count }}</p>
                 </div>
-                <div class="stat-card" style="border-left: 5px solid #10b981; background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #eef2f5; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);">
-                    <h3 style="font-size: 0.95rem; color: #475569; margin: 0 0 10px 0;">Likes Recibidos</h3>
-                    <p class="stat-number" style="font-size: 2.2rem; font-weight: 700; color: #1a1a1a; margin: 0;">{{ total_likes_count }}</p>
+                <div class="profile-stat-card stat-green">
+                    <h3>Likes Recibidos</h3>
+                    <p class="stat-number">{{ total_likes_count }}</p>
                 </div>
-                <div class="stat-card" style="border-left: 5px solid #334155; background: #ffffff; padding: 20px; border-radius: 8px; border: 1px solid #eef2f5; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);">
-                    <h3 style="font-size: 0.95rem; color: #475569; margin: 0 0 10px 0;">Comentarios Escritos</h3>
-                    <p class="stat-number" style="font-size: 2.2rem; font-weight: 700; color: #1a1a1a; margin: 0;">{{ commented_articles_count }}</p>
+                <div class="profile-stat-card stat-dark">
+                    <h3>Comentarios Escritos</h3>
+                    <p class="stat-number">{{ commented_articles_count }}</p>
                 </div>
             </div>
 
-            <h3 style="margin-top: 40px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; color: #1e293b; font-size: 1.25rem;">Artículos Recientes</h3>
+            <h3 class="profile-articles-title">Artículos Recientes</h3>
             {% if profile_user.articles.all %}
-                <ul style="list-style: none; padding: 0; margin: 20px 0 0 0;">
+                <ul class="profile-articles-list">
                     {% for article in profile_user.articles.all|slice:":5" %}
-                        <li style="padding: 15px; border: 1px solid #eef2f5; border-radius: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; background-color: #f8fafc; transition: background-color 0.2s;">
+                        <li class="profile-article-item">
                             <div>
-                                <a href="{% url 'article_detail' pk=article.id %}" style="font-weight: 600; color: #1e293b; text-decoration: none; font-size: 1rem;" class="article-title-link">
+                                <a href="{% url 'article_detail' pk=article.id %}" class="profile-article-link">
                                     {{ article.title }}
                                 </a>
-                                <div style="font-size: 0.8rem; color: #64748b; margin-top: 4px;">
+                                <div class="profile-article-meta">
                                     Estado: <span class="badge badge-{{ article.status }}">{{ article.get_status_display }}</span> | Creado: {{ article.created_at|date:"d/m/Y" }}
                                 </div>
                             </div>
-                            <span style="font-size: 0.9rem; color: #64748b; font-weight: 500;">
+                            <span class="profile-article-likes">
                                 ❤️ {{ article.likes.count }}
                             </span>
                         </li>
                     {% endfor %}
                 </ul>
             {% else %}
-                <p style="color: #64748b; font-style: italic; margin-top: 15px;">Este usuario aún no ha redactado ningún artículo.</p>
+                <p class="profile-no-articles">Este usuario aún no ha redactado ningún artículo.</p>
             {% endif %}
         </div>
     </div>

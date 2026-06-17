@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Mensaje: {{ msg.asunto }} - Mi Revista{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=1.1">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-container message-detail-container">
+    <div class="dashboard-header">
+        <div>
+            <h1>✉️ Detalle del Mensaje</h1>
+            <p>Enviado el {{ msg.created_at|date:"d/m/Y \a \l\a\s H:i" }}</p>
+        </div>
+        <a href="{% url 'inbox' %}" class="btn-cancel btn-back-inbox">
+            ← Volver al buzón
+        </a>
+    </div>
+
+    <div class="table-container message-detail-card">
+        <div class="message-detail-header">
+            <div class="message-info-row">
+                <div class="message-sender-info">
+                    <h3 class="message-label">De:</h3>
+                    <strong class="message-sender-name">{{ msg.nombre }}</strong> 
+                    <span class="message-sender-email">&lt;<a href="mailto:{{ msg.email }}" class="message-email-link">{{ msg.email }}</a>&gt;</span>
+                </div>
+                <div class="message-recipient-info">
+                    <span class="badge badge-published badge-recipient">
+                        Para: {% if msg.destinatario %}@{{ msg.destinatario.username }}{% else %}Administrador{% endif %}
+                    </span>
+                </div>
+            </div>
+            
+            <div class="message-asunto-row">
+                <h3 class="message-label">Asunto:</h3>
+                <h2 class="message-asunto">{{ msg.asunto }}</h2>
+            </div>
+        </div>
+
+        <div class="message-body-box">
+            {{ msg.mensaje }}
+        </div>
+
+        <div class="message-actions-bar">
+            {% if msg.remitente %}
+                <a href="{% url 'contact' %}?to={{ msg.remitente.id }}&asunto=Re: {{ msg.asunto }}" class="btn-update-role btn-reply-internal">
+                    💬 Responder Internamente
+                </a>
+            {% endif %}
+            <a href="mailto:{{ msg.email }}?subject=Re: {{ msg.asunto }}" class="btn-update-role btn-reply-email">
+                ✉️ Responder por Email
+            </a>
+            <a href="{% url 'inbox' %}" class="btn-cancel btn-bottom-back">
+                Volver al Buzón
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
