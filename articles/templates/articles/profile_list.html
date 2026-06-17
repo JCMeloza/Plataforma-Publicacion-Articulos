@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Usuarios Registrados{% endblock %}
+
+{% block extra_css %}
+    
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=1.1">
+{% endblock %}
+
+{% block content %}
+<h2 class="feed-title">Lista de Usuarios Registrados</h2>
+
+{% if users %}
+    <div class="profile-grid">
+        {% for oneUser in users %}
+        <div class="profile-card pointer">
+            <div class="profile-avatar-circle">
+                {% if oneUser.avatar %}
+                    <img src="{{ oneUser.avatar.url }}" alt="Avatar de {{ oneUser.username }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                {% else %}
+                    {{ oneUser.username|slice:":2"|upper }}
+                {% endif %}
+            </div>
+            <h2>@{{ oneUser.username }}</h2>
+            <p>{{ oneUser.email }}</p>
+            
+            <span class="profile-role-badge">
+                Rol: {{ oneUser.get_role_display }}
+            </span>
+        </div>
+        {% endfor %}
+    </div>
+    
+    
+    
+
+{% else %}
+    <div class="no-articles">
+        <p>No hay ningún usuario registrado.</p>
+        
+    </div>
+{% endif %}
+{% endblock %}

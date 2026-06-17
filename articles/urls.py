@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import AddCommentView, AdminDashboardView, ApproveArticleView, ArticleDetailView, ArticleListView, ArticleUpdateView, CategoryCreateView, ChangeUserRoleView, LikeArticleView, ProfileView, RegisterView, CustomLoginView, CustomLogoutView, RejectArticleView, ReviewCreateView, SendToReviewView, TagCreateView, WorkDashboardView
+from .views import AddCommentView, AdminDashboardView, ApproveArticleView, ArticleDetailView, ArticleListView, ArticleUpdateView, CategoryCreateView, ChangeUserRoleView, LikeArticleView, ProfileListView, ProfileView, RegisterView, CustomLoginView, CustomLogoutView, RejectArticleView, ReviewCreateView, SendToReviewView, TagCreateView, WorkDashboardView
 
 urlpatterns = [
     path('', ArticleListView.as_view(), name='home'),
@@ -30,4 +30,6 @@ urlpatterns = [
     path('article/<int:article_id>/like/', LikeArticleView.as_view(), name='like_article'),
 
     path('dashboard/profile/', ProfileView.as_view(), name='profile'),
+
+    path('dashboard/profile-list/', ProfileListView.as_view(), name='profile_list')
 ]

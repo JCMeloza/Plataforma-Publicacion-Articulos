@@ -286,3 +286,14 @@ class ProfileView(LoginRequiredMixin, View):
         
         messages.error(request, "Por favor, corrige los errores del formulario.")
         return render(request, self.template_name, {'form': form})
+    
+class ProfileListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
+    template_name ='articles/profile_list.html'
+    model = User
+    context_object_name='users'
+
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.role in ['reviewer', 'editor']
+
+    def get_queryset(self):
+        return User.objects.all().filter(is_superuser=False).exclude(id=self.request.user.id).order_by('username')  
