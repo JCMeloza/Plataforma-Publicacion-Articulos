@@ -14,7 +14,7 @@
 {% if users %}
     <div class="profile-grid">
         {% for oneUser in users %}
-        <div class="profile-card pointer">
+        <div class="profile-card pointer" onclick="window.location.href='{% url 'profile_detail' pk=oneUser.id %}'">
             <div class="profile-avatar-circle">
                 {% if oneUser.avatar %}
                     <img src="{{ oneUser.avatar.url }}" alt="Avatar de {{ oneUser.username }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">

@@ -293,7 +293,24 @@ class ProfileListView(LoginRequiredMixin, UserPassesTestMixin, ListView):
     context_object_name='users'
 
     def test_func(self):
-        return self.request.user.is_superuser or self.request.user.role in ['reviewer', 'editor']
+        return self.request.user.is_superuser or self.request.user.role in ['reviewer', 'editor', 'reader']
 
     def get_queryset(self):
         return User.objects.all().filter(is_superuser=False).exclude(id=self.request.user.id).order_by('username')  
+    
+class ProfileDetailView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+    model = User
+    template_name = 'articles/profile_detail.html'
+    context_object_name = 'profile_user'
+    
+    def test_func(self):
+        return self.request.user.is_superuser or self.request.user.role in ['reviewer', 'editor', 'reader']
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['authored_articles_count'] = self.object.articles.count()
+        context['commented_articles_count'] = self.object.comment_set.count()
+        context['total_likes_count'] = Like.objects.filter(article__autor=self.object).count()
+        return context
+        
+        

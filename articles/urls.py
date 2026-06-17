@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import AddCommentView, AdminDashboardView, ApproveArticleView, ArticleDetailView, ArticleListView, ArticleUpdateView, CategoryCreateView, ChangeUserRoleView, LikeArticleView, ProfileListView, ProfileView, RegisterView, CustomLoginView, CustomLogoutView, RejectArticleView, ReviewCreateView, SendToReviewView, TagCreateView, WorkDashboardView
+from .views import AddCommentView, AdminDashboardView, ApproveArticleView, ArticleDetailView, ArticleListView, ArticleUpdateView, CategoryCreateView, ChangeUserRoleView, LikeArticleView, ProfileDetailView, ProfileListView, ProfileView, RegisterView, CustomLoginView, CustomLogoutView, RejectArticleView, ReviewCreateView, SendToReviewView, TagCreateView, WorkDashboardView
 
 urlpatterns = [
     path('', ArticleListView.as_view(), name='home'),
@@ -31,5 +31,6 @@ urlpatterns = [
 
     path('dashboard/profile/', ProfileView.as_view(), name='profile'),
 
-    path('dashboard/profile-list/', ProfileListView.as_view(), name='profile_list')
+    path('dashboard/profile-list/', ProfileListView.as_view(), name='profile_list'),
+    path('dashboard/profile-list/<int:pk>/', ProfileDetailView.as_view(), name='profile_detail')
 ]
