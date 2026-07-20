@@ -63,7 +63,7 @@ class CommentForm(forms.ModelForm):
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        # 🟢 Sincronizados: Eliminamos 'role' por seguridad y añadimos 'email'
+        #  Sincronizados: Eliminamos 'role' por seguridad y añadimos 'email'
         fields = ['username', 'email', 'bio', 'avatar'] 
         
         widgets = {
