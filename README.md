@@ -77,12 +77,19 @@ pip install -r requirements.txt
 python manage.py migrate
 ```
 
-### 5. Crear el usuario Administrador (Superusuario)
+### 5. Crear el superusuario
 ```bash
 python manage.py createsuperuser
 ```
 
-### 6. Ejecutar el servidor de desarrollo
+### 6. Datos de prueba
+Para probar la plataforma con diferentes roles, podes crear los siguientes usuarios:
+- **Superusuario (Admin)**: `admin` / `admin`
+- **Lector**: `lector_usuario1` / `prueba`
+- **Redactor**: `redactor_usuario1` / `prueba`
+- **Editor**: `editor_usuario1` / `prueba`
+
+### 7. Ejecutar el servidor de desarrollo
 ```bash
 python manage.py runserver
 ```

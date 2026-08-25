@@ -94,6 +94,9 @@ Thumbs.db
 
 # !*/migrations/**init**.py
 
+# Project specific
+.atl/
+
 # Docker
 
 *.pid
