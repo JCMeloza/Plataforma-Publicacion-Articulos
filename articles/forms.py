@@ -4,6 +4,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.forms import widgets
 
 from articles.models import Article, Category, Comment, Tag
+from editorial.models import Review
 
 User = get_user_model()
 
@@ -18,8 +19,8 @@ class ChangeRoleForm(forms.ModelForm):
         fields = ['role']
 
 
-#Formulario para crear una publicación
-class ReviewCreateForm(forms.ModelForm):
+#Formulario para crear una publicación (renamed from ReviewCreateForm)
+class ArticleForm(forms.ModelForm):
 
     class Meta:
         model = Article
@@ -30,6 +31,30 @@ class ReviewCreateForm(forms.ModelForm):
             'category',
             'tags'
         ]
+
+
+# Backward compatibility alias (deprecated: use ArticleForm)
+ReviewCreateForm = ArticleForm
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ['comments', 'feedback']
+        widgets = {
+            'comments': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Comentarios internos (requerido)...'}),
+            'feedback': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Sugerencias para el autor (opcional)...'}),
+        }
+        labels = {
+            'comments': 'Comentarios internos *',
+            'feedback': 'Sugerencias para el autor',
+        }
+
+    def __init__(self, *args, **kwargs):
+        self.decision = kwargs.pop('decision', None)
+        super().__init__(*args, **kwargs)
+        if self.decision:
+            self.instance.decision = self.decision
+
 
 #Formulario para crear categorias
 class CategoryCreateForm(forms.ModelForm):

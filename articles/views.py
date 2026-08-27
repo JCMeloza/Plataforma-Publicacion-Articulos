@@ -3,7 +3,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
 from .models import Article, Category, Like, Tag, ContactMessage
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm, UserProfileForm
+from .forms import ArticleForm, CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm, UserProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
@@ -101,11 +101,11 @@ class WorkDashboardView(LoginRequiredMixin, UserPassesTestMixin, ListView):
         
         return Article.objects.none()
 
-class ReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
+class ArticleCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
 
-    template_name = 'articles/review_create.html'
+    template_name = 'articles/article_form.html'
     model = Article
-    form_class = ReviewCreateForm
+    form_class = ArticleForm
     success_url = reverse_lazy('work_dashboard')
 
     def test_func(self):
@@ -120,7 +120,11 @@ class ReviewCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
             messages.SUCCESS,
             "Articulo creado correctamente.",
         )
-        return super(ReviewCreateView, self).form_valid(form)
+        return super(ArticleCreateView, self).form_valid(form)
+
+
+# Backward compatibility alias (deprecated: use ArticleCreateView)
+ReviewCreateView = ArticleCreateView
 
 
 class CategoryCreateView(LoginRequiredMixin, UserPassesTestMixin, CreateView):
@@ -207,6 +211,31 @@ class RejectArticleView(LoginRequiredMixin, UserPassesTestMixin, View):
         else:
             messages.error(request, "Este artículo no está pendiente de revisión.")
             
+        return redirect('work_dashboard')
+
+
+# Stub for ReviewFormView (Foundation PR1 — full GET/POST flow implemented in PR2)
+class ReviewFormView(LoginRequiredMixin, UserPassesTestMixin, View):
+    """Handle GET (show form) and POST (create Review + update status) for approve/reject.
+    Full implementation in Phase 2; stub ensures URL routing exists in PR1."""
+    def test_func(self):
+        return self.request.user.role == 'editor'
+
+    def get(self, request, article_id):
+        article = get_object_or_404(Article, id=article_id)
+        if article.status != 'pending':
+            messages.error(request, "Este artículo no está pendiente de revisión")
+            return redirect('work_dashboard')
+        # Placeholder: redirect until full form flow is implemented in PR2
+        messages.error(request, "Flujo de revisión en construcción")
+        return redirect('work_dashboard')
+
+    def post(self, request, article_id):
+        article = get_object_or_404(Article, id=article_id)
+        if article.status != 'pending':
+            messages.error(request, "Este artículo no está pendiente de revisión")
+            return redirect('work_dashboard')
+        messages.error(request, "Flujo de revisión en construcción")
         return redirect('work_dashboard')  
     
 class ArticleDetailView(DetailView):
@@ -228,8 +257,8 @@ class ArticleDetailView(DetailView):
 
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
-    template_name = 'articles/review_create.html'
-    form_class = ReviewCreateForm
+    template_name = 'articles/article_form.html'
+    form_class = ArticleForm
     success_url = reverse_lazy('work_dashboard')
 
     def test_func(self):
