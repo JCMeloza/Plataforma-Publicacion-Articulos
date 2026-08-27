@@ -231,6 +231,17 @@ class ArticleDetailView(DetailView):
     template_name = 'articles/article_detail.html'
     context_object_name = 'article'
 
+    def get_queryset(self):
+        # Published is public; drafts/pending/rejected are visible only to
+        # their author (or an editor). Anything else resolves to 404.
+        qs = super().get_queryset().select_related('autor')
+        user = self.request.user
+        if user.is_authenticated:
+            if getattr(user, 'role', None) == 'editor':
+                return qs
+            return qs.filter(Q(status='published') | Q(autor=user))
+        return qs.filter(status='published')
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['comment_form'] = CommentForm()

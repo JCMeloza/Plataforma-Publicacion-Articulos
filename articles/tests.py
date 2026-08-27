@@ -414,17 +414,20 @@ class ReviewHistoryVisibilityTests(TestCase):
 
     def test_other_reviewer_cannot_see_history(self):
         self.client.login(username="hist_other", password="pass1234")
-        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        response = self.client.get(reverse("article_detail", args=[self.article_published.id]))
+        self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Historial de revisiones")
         self.assertNotContains(response, "Falta profundidad en el análisis")
 
     def test_reader_cannot_see_history(self):
         self.client.login(username="hist_reader", password="pass1234")
-        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        response = self.client.get(reverse("article_detail", args=[self.article_published.id]))
+        self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Historial de revisiones")
 
     def test_anonymous_cannot_see_history(self):
-        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        response = self.client.get(reverse("article_detail", args=[self.article_published.id]))
+        self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Historial de revisiones")
         self.assertNotContains(response, "Ampliar bibliografía")
 
@@ -452,6 +455,70 @@ class ReviewHistoryVisibilityTests(TestCase):
         response = self.client.get(reverse("article_detail", args=[self.article_multi.id]))
         self.assertNotContains(response, "Coment 1")
         self.assertNotContains(response, "Feed 1")
+
+
+class ArticleDetailAccessTests(TestCase):
+    """Draft/pending/rejected articles are private: published is public,
+    other states are visible only to their author or to an editor."""
+
+    def setUp(self):
+        self.author = User.objects.create_user(username="acc_author", password="pass1234", role="reviewer")
+        self.editor = User.objects.create_user(username="acc_editor", password="pass1234", role="editor")
+        self.reader = User.objects.create_user(username="acc_reader", password="pass1234", role="reader")
+        self.category = Category.objects.create(name="AccCat", slug="accat")
+        self.article_published = Article.objects.create(
+            title="Acc Published", slug="acc-published", content="pub",
+            category=self.category, autor=self.author, status="published",
+        )
+        self.article_draft = Article.objects.create(
+            title="Acc Draft", slug="acc-draft", content="draft",
+            category=self.category, autor=self.author, status="draft",
+        )
+        self.article_pending = Article.objects.create(
+            title="Acc Pending", slug="acc-pending", content="pending",
+            category=self.category, autor=self.author, status="pending",
+        )
+        self.article_rejected = Article.objects.create(
+            title="Acc Rejected", slug="acc-rejected", content="rejected",
+            category=self.category, autor=self.author, status="rejected",
+        )
+
+    def test_anonymous_can_see_published_article(self):
+        response = self.client.get(reverse("article_detail", args=[self.article_published.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_anonymous_cannot_see_draft(self):
+        response = self.client.get(reverse("article_detail", args=[self.article_draft.id]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_anonymous_cannot_see_pending(self):
+        response = self.client.get(reverse("article_detail", args=[self.article_pending.id]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_anonymous_cannot_see_rejected(self):
+        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_other_user_cannot_see_draft(self):
+        self.client.login(username="acc_reader", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_draft.id]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_author_can_see_own_draft(self):
+        self.client.login(username="acc_author", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_draft.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_author_can_see_own_rejected(self):
+        self.client.login(username="acc_author", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_editor_can_see_any_state(self):
+        self.client.login(username="acc_editor", password="pass1234")
+        for article in (self.article_draft, self.article_pending, self.article_rejected):
+            response = self.client.get(reverse("article_detail", args=[article.id]))
+            self.assertEqual(response.status_code, 200)
 
 
 class ReviewResubmissionTests(TestCase):
