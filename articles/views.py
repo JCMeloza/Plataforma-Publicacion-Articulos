@@ -273,7 +273,15 @@ class ArticleDetailView(DetailView):
             context['user_has_liked'] = self.object.likes.filter(user=self.request.user).exists()
         else:
             context['user_has_liked'] = False
-            
+
+        # Review history — chronological, visible to author and editors only
+        context['reviews'] = self.object.reviews.select_related('reviewer').order_by('created_at')
+        user = self.request.user
+        context['can_view_history'] = (
+            user.is_authenticated
+            and (user == self.object.autor or getattr(user, 'role', None) == 'editor')
+        )
+
         return context
 
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

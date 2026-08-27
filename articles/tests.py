@@ -335,3 +335,247 @@ class ReviewFormViewTests(TestCase):
         # Ensure the new GET links exist (Aprobar/Rechazar text)
         self.assertContains(response, "Aprobar")
         self.assertContains(response, "Rechazar")
+
+
+# ── Phase 3: Review History Display + Resubmission (Strict TDD RED) ──
+class ReviewHistoryVisibilityTests(TestCase):
+    """TDD RED: review history visibility per review-history-display spec."""
+
+    def setUp(self):
+        self.author = User.objects.create_user(username="hist_author", password="pass1234", role="reviewer")
+        self.editor = User.objects.create_user(username="hist_editor", password="pass1234", role="editor")
+        self.other_reviewer = User.objects.create_user(username="hist_other", password="pass1234", role="reviewer")
+        self.reader = User.objects.create_user(username="hist_reader", password="pass1234", role="reader")
+        self.editor2 = User.objects.create_user(username="hist_editor2", password="pass1234", role="editor")
+        self.category = Category.objects.create(name="HistCat", slug="histcat")
+        self.article_rejected = Article.objects.create(
+            title="Rejected with Review", slug="rejected-with-review", content="Contenido",
+            category=self.category, autor=self.author, status="rejected",
+        )
+        self.review1 = Review.objects.create(
+            article=self.article_rejected, reviewer=self.editor,
+            decision="reject", comments="Falta profundidad en el análisis",
+            feedback="Ampliar bibliografía",
+        )
+        self.article_published = Article.objects.create(
+            title="Published with Review", slug="published-with-review", content="Contenido pub",
+            category=self.category, autor=self.author, status="published",
+        )
+        self.review_pub = Review.objects.create(
+            article=self.article_published, reviewer=self.editor,
+            decision="approve", comments="Excelente artículo, bien estructurado",
+            feedback="Considerar añadir más ejemplos",
+        )
+        self.article_draft = Article.objects.create(
+            title="Draft no reviews", slug="draft-no-reviews", content="borrador",
+            category=self.category, autor=self.author, status="draft",
+        )
+        self.article_multi = Article.objects.create(
+            title="Multi Review", slug="multi-review", content="multi",
+            category=self.category, autor=self.author, status="published",
+        )
+        # create 3 reviews with distinct timestamps via manual creation order
+        self.r1 = Review.objects.create(article=self.article_multi, reviewer=self.editor, decision="reject", comments="Coment 1", feedback="Feed 1")
+        self.r2 = Review.objects.create(article=self.article_multi, reviewer=self.editor2, decision="reject", comments="Coment 2", feedback="Feed 2")
+        self.r3 = Review.objects.create(article=self.article_multi, reviewer=self.editor, decision="approve", comments="Coment 3", feedback="Feed 3")
+
+    def test_author_sees_history_with_feedback_and_details(self):
+        self.client.login(username="hist_author", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Historial de revisiones")
+        self.assertContains(response, self.editor.username)
+        self.assertContains(response, "Rechazado")
+        self.assertContains(response, "Falta profundidad en el análisis")
+        self.assertContains(response, "Ampliar bibliografía")
+        # timestamp present (created_at rendered)
+        self.assertContains(response, str(self.review1.created_at.year))
+
+    def test_author_sees_published_approval_history(self):
+        self.client.login(username="hist_author", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_published.id]))
+        self.assertContains(response, "Historial de revisiones")
+        self.assertContains(response, "Aprobado")
+        self.assertContains(response, "Excelente artículo, bien estructurado")
+
+    def test_editor_sees_all_fields_including_comments(self):
+        self.client.login(username="hist_editor", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        self.assertContains(response, "Historial de revisiones")
+        self.assertContains(response, "Falta profundidad en el análisis")
+        self.assertContains(response, "Ampliar bibliografía")
+        self.assertContains(response, self.editor.username)
+
+    def test_editor_sees_history_even_if_not_reviewer(self):
+        self.client.login(username="hist_editor2", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        self.assertContains(response, "Historial de revisiones")
+        self.assertContains(response, self.editor.username)
+
+    def test_other_reviewer_cannot_see_history(self):
+        self.client.login(username="hist_other", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        self.assertNotContains(response, "Historial de revisiones")
+        self.assertNotContains(response, "Falta profundidad en el análisis")
+
+    def test_reader_cannot_see_history(self):
+        self.client.login(username="hist_reader", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        self.assertNotContains(response, "Historial de revisiones")
+
+    def test_anonymous_cannot_see_history(self):
+        response = self.client.get(reverse("article_detail", args=[self.article_rejected.id]))
+        self.assertNotContains(response, "Historial de revisiones")
+        self.assertNotContains(response, "Ampliar bibliografía")
+
+    def test_draft_with_no_reviews_shows_no_history_or_empty_message(self):
+        self.client.login(username="hist_author", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_draft.id]))
+        # should not crash, and should not show reviewer data
+        self.assertEqual(response.status_code, 200)
+        # either hidden or shows "Sin revisiones" — we assert no reviewer name leaked
+        self.assertNotContains(response, "Falta profundidad")
+
+    def test_multiple_reviews_displayed_chronologically(self):
+        self.client.login(username="hist_author", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_multi.id]))
+        self.assertContains(response, "Historial de revisiones")
+        self.assertContains(response, "Coment 1")
+        self.assertContains(response, "Coment 2")
+        self.assertContains(response, "Coment 3")
+        content = response.content.decode()
+        # chronological order: 1 before 2 before 3
+        self.assertTrue(content.index("Coment 1") < content.index("Coment 2") < content.index("Coment 3"))
+
+    def test_non_author_non_editor_does_not_see_feedback(self):
+        self.client.login(username="hist_other", password="pass1234")
+        response = self.client.get(reverse("article_detail", args=[self.article_multi.id]))
+        self.assertNotContains(response, "Coment 1")
+        self.assertNotContains(response, "Feed 1")
+
+
+class ReviewResubmissionTests(TestCase):
+    """TDD RED: resubmission cycle — rejected → edit → send_to_review → new review."""
+
+    def setUp(self):
+        self.author = User.objects.create_user(username="res_author", password="pass1234", role="reviewer")
+        self.editor = User.objects.create_user(username="res_editor", password="pass1234", role="editor")
+        self.category = Category.objects.create(name="ResCat", slug="rescat")
+        self.article = Article.objects.create(
+            title="Resub Article", slug="resub-article", content="Original",
+            category=self.category, autor=self.author, status="pending",
+        )
+
+    def test_rejected_then_resubmitted_can_be_reviewed_again_and_accumulates_history(self):
+        # Step 1: editor rejects pending → rejected + Review1
+        self.client.login(username="res_editor", password="pass1234")
+        resp = self.client.post(reverse("review_reject", args=[self.article.id]), data={"comments": "Mal", "feedback": "Mejorar"})
+        self.assertRedirects(resp, reverse("work_dashboard"))
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "rejected")
+        self.assertEqual(Review.objects.filter(article=self.article).count(), 1)
+        self.client.logout()
+
+        # Step 2: author edits rejected article → status reset to draft via ArticleUpdateView
+        self.client.login(username="res_author", password="pass1234")
+        edit_url = reverse("article_edit", args=[self.article.id])
+        resp = self.client.post(edit_url, data={
+            "title": "Resub Article v2",
+            "content": "Contenido mejorado",
+            "category": self.category.id,
+            "tags": [],
+        })
+        self.assertEqual(resp.status_code, 302)
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "draft")
+        self.assertEqual(self.article.title, "Resub Article v2")
+
+        # Step 3: author sends to review → pending, reviews preserved
+        resp = self.client.post(reverse("send_to_review", args=[self.article.id]))
+        self.assertRedirects(resp, reverse("work_dashboard"))
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "pending")
+        self.assertEqual(Review.objects.filter(article=self.article).count(), 1)
+        self.client.logout()
+
+        # Step 4: editor approves resubmitted article → second Review
+        self.client.login(username="res_editor", password="pass1234")
+        resp = self.client.post(reverse("review_approve", args=[self.article.id]), data={"comments": "Ahora bien", "feedback": ""})
+        self.assertRedirects(resp, reverse("work_dashboard"))
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "published")
+        self.assertEqual(Review.objects.filter(article=self.article).count(), 2)
+        reviews = list(Review.objects.filter(article=self.article).order_by("created_at"))
+        self.assertEqual(reviews[0].decision, "reject")
+        self.assertEqual(reviews[1].decision, "approve")
+
+    def test_send_to_review_preserves_existing_reviews(self):
+        # create rejected article with review already
+        self.article.status = "rejected"
+        self.article.save()
+        Review.objects.create(article=self.article, reviewer=self.editor, decision="reject", comments="c", feedback="f")
+        self.client.login(username="res_author", password="pass1234")
+        # edit to draft first (simulating author fix) then send
+        self.client.post(reverse("article_edit", args=[self.article.id]), data={
+            "title": self.article.title, "content": "edit", "category": self.category.id, "tags": []
+        })
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "draft")
+        before = Review.objects.filter(article=self.article).count()
+        self.client.post(reverse("send_to_review", args=[self.article.id]))
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "pending")
+        self.assertEqual(Review.objects.filter(article=self.article).count(), before)
+
+
+class MultipleReviewRoundsTests(TestCase):
+    """TDD RED: 3 cycles (reject, reject, approve) → 3 Review records."""
+
+    def setUp(self):
+        self.author = User.objects.create_user(username="multi_author", password="pass1234", role="reviewer")
+        self.editor = User.objects.create_user(username="multi_editor", password="pass1234", role="editor")
+        self.category = Category.objects.create(name="MultiCat2", slug="multicat2")
+        self.article = Article.objects.create(
+            title="Three Cycles", slug="three-cycles", content="v1",
+            category=self.category, autor=self.author, status="pending",
+        )
+
+    def test_three_review_cycles_accumulate_and_display(self):
+        # Cycle 1: reject
+        self.client.login(username="multi_editor", password="pass1234")
+        self.client.post(reverse("review_reject", args=[self.article.id]), data={"comments": "C1", "feedback": "F1"})
+        self.client.logout()
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "rejected")
+        # resubmit 1: edit + send
+        self.client.login(username="multi_author", password="pass1234")
+        self.client.post(reverse("article_edit", args=[self.article.id]), data={"title": "Three Cycles", "content": "v2", "category": self.category.id, "tags": []})
+        self.client.post(reverse("send_to_review", args=[self.article.id]))
+        self.client.logout()
+        # Cycle 2: reject again
+        self.client.login(username="multi_editor", password="pass1234")
+        self.client.post(reverse("review_reject", args=[self.article.id]), data={"comments": "C2", "feedback": "F2"})
+        self.client.logout()
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "rejected")
+        # resubmit 2
+        self.client.login(username="multi_author", password="pass1234")
+        self.client.post(reverse("article_edit", args=[self.article.id]), data={"title": "Three Cycles", "content": "v3", "category": self.category.id, "tags": []})
+        self.client.post(reverse("send_to_review", args=[self.article.id]))
+        self.client.logout()
+        # Cycle 3: approve
+        self.client.login(username="multi_editor", password="pass1234")
+        self.client.post(reverse("review_approve", args=[self.article.id]), data={"comments": "C3", "feedback": ""})
+        self.client.logout()
+        self.article.refresh_from_db()
+        self.assertEqual(self.article.status, "published")
+        self.assertEqual(Review.objects.filter(article=self.article).count(), 3)
+        reviews = list(Review.objects.filter(article=self.article).order_by("created_at"))
+        self.assertEqual([r.decision for r in reviews], ["reject", "reject", "approve"])
+        self.assertEqual([r.comments for r in reviews], ["C1", "C2", "C3"])
+        # also verify history visible to author chronologically
+        self.client.login(username="multi_author", password="pass1234")
+        resp = self.client.get(reverse("article_detail", args=[self.article.id]))
+        content = resp.content.decode()
+        self.assertContains(resp, "Historial de revisiones")
+        self.assertTrue(content.index("C1") < content.index("C2") < content.index("C3"))

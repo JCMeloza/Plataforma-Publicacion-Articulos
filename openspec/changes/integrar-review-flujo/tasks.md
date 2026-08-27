@@ -55,14 +55,14 @@ Chain strategy: stacked-to-main
 
 ## Phase 3: Integration (Review History Display)
 
-- [ ] 3.1 Write RED tests for review history visibility in `articles/tests.py`: author sees feedback, editors see all fields, non-author non-editor sees nothing
-- [ ] 3.2 Run tests → GREEN: add "Historial de revisiones" section to `articles/templates/articles/article_detail.html` using `article.reviews.all|dictsort:"created_at"`
-- [ ] 3.2.1 Template shows: reviewer name, decision badge (Aprobado/Rechazado), comments, feedback, timestamp
-- [ ] 3.2.2 Visibility: show section only if `user == article.autor` or `user.role == 'editor'` and `article.reviews.exists`
-- [ ] 3.3 Write RED tests for resubmission cycle in `articles/tests.py`: rejected → author edits → send_to_review → status=pending → new review cycle creates second Review
-- [ ] 3.4 Run tests → GREEN: verify `SendToReviewView` already handles this (status reset to pending, reviews preserved)
-- [ ] 3.5 Write RED tests for multiple review rounds: 3 cycles (reject, reject, approve) → 3 Review records queryable
-- [ ] 3.6 Run tests → GREEN: confirm chronological display works
+- [x] 3.1 Write RED tests for review history visibility in `articles/tests.py`: author sees feedback, editors see all fields, non-author non-editor sees nothing
+- [x] 3.2 Run tests → GREEN: add "Historial de revisiones" section to `articles/templates/articles/article_detail.html` using `article.reviews.all|dictsort:"created_at"`
+- [x] 3.2.1 Template shows: reviewer name, decision badge (Aprobado/Rechazado), comments, feedback, timestamp
+- [x] 3.2.2 Visibility: show section only if `user == article.autor` or `user.role == 'editor'` and `article.reviews.exists`
+- [x] 3.3 Write RED tests for resubmission cycle in `articles/tests.py`: rejected → author edits → send_to_review → status=pending → new review cycle creates second Review
+- [x] 3.4 Run tests → GREEN: verify `SendToReviewView` already handles this (status reset to pending, reviews preserved)
+- [x] 3.5 Write RED tests for multiple review rounds: 3 cycles (reject, reject, approve) → 3 Review records queryable
+- [x] 3.6 Run tests → GREEN: confirm chronological display works
 
 ## Phase 4: Cleanup & Verification
 

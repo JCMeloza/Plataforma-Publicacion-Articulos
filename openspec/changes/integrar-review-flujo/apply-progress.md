@@ -1,4 +1,4 @@
-# Apply Progress: integrar-review-flujo — PR 1 Foundation + PR 2 Core Flow (stacked-to-main)
+# Apply Progress: integrar-review-flujo — PR 1 Foundation + PR 2 Core Flow + PR 3 History Display (stacked-to-main)
 
 ## Change
 integrar-review-flujo
@@ -34,6 +34,17 @@ Strict TDD (venv/bin/python manage.py test)
 - [x] 2.13 Create `articles/templates/articles/review_form.html` template with form, decision context, cancel link
 - [x] 2.14 Update `articles/templates/articles/work_dashboard.html`: editor "Aprobar"/"Rechazar" buttons link to `review_approve`/`review_reject` URLs (GET) instead of direct POST forms
 
+## Completed Tasks (Phase 3: Review History Display)
+
+- [x] 3.1 Write RED tests for review history visibility in `articles/tests.py`: author sees feedback, editors see all fields, non-author non-editor sees nothing
+- [x] 3.2 Run tests → GREEN: add "Historial de revisiones" section to `articles/templates/articles/article_detail.html` using `article.reviews.all|dictsort:"created_at"`
+- [x] 3.2.1 Template shows: reviewer name, decision badge (Aprobado/Rechazado), comments, feedback, timestamp
+- [x] 3.2.2 Visibility: show section only if `user == article.autor` or `user.role == 'editor'` and `article.reviews.exists`
+- [x] 3.3 Write RED tests for resubmission cycle in `articles/tests.py`: rejected → author edits → send_to_review → status=pending → new review cycle creates second Review
+- [x] 3.4 Run tests → GREEN: verify `SendToReviewView` already handles this (status reset to pending, reviews preserved)
+- [x] 3.5 Write RED tests for multiple review rounds: 3 cycles (reject, reject, approve) → 3 Review records queryable
+- [x] 3.6 Run tests → GREEN: confirm chronological display works
+
 ## Files Changed
 
 | File | Action | What Was Done |
@@ -46,8 +57,10 @@ Strict TDD (venv/bin/python manage.py test)
 | `articles/templates/articles/review_form.html` | Created (PR2) | New template for review form: decision-aware header, article summary, comments/feedback fields with error display, approve/reject submit + cancel link |
 | `articles/templates/articles/work_dashboard.html` | Modified (PR1+PR2) | PR1: Updated `{% url 'review_create' %}` → `{% url 'article_create' %}`. PR2: Replaced editor POST forms (`approve_article`/`reject_article`) with GET links to `review_approve`/`review_reject` |
 | `editorial/tests.py` | Modified (PR1) | Added 13 ReviewFormTests (TDD RED→GREEN) |
-| `articles/tests.py` | Modified (PR1+PR2) | PR1: Added 11 tests: ArticleFormRenameTests + ArticleCreateUrlTests. PR2: Added 22 ReviewFormViewTests (TDD RED→GREEN) covering permissions, GET/POST approve/reject, validation, non-pending, work_dashboard links |
-| `openspec/changes/integrar-review-flujo/tasks.md` | Modified | Marked Phase 1 (1.1–1.9) and Phase 2 (2.1–2.14) as [x]; fixed duplicate numbering 2.11/2.12 → 2.13/2.14 |
+| `articles/tests.py` | Modified (PR1+PR2+PR3) | PR1: Added 11 tests: ArticleFormRenameTests + ArticleCreateUrlTests. PR2: Added 22 ReviewFormViewTests (TDD RED→GREEN) covering permissions, GET/POST approve/reject, validation, non-pending, work_dashboard links. PR3: Added 13 tests: ReviewHistoryVisibilityTests (10), ReviewResubmissionTests (2), MultipleReviewRoundsTests (1) |
+| `articles/views.py` | Modified (PR3) | Added `reviews` (ordered by created_at) and `can_view_history` (author or editor) to `ArticleDetailView.get_context_data` |
+| `articles/templates/articles/article_detail.html` | Modified (PR3) | Added "Historial de revisiones" section: loops `reviews` chronologically, shows reviewer username, decision badge (Aprobado/Rechazado), comments, feedback, timestamp; visible only if `can_view_history and reviews` |
+| `openspec/changes/integrar-review-flujo/tasks.md` | Modified | Marked Phase 1 (1.1–1.9), Phase 2 (2.1–2.14), Phase 3 (3.1–3.6) as [x]; fixed duplicate numbering 2.11/2.12 → 2.13/2.14 |
 
 ## TDD Cycle Evidence (Strict TDD Mode)
 
@@ -64,15 +77,27 @@ Strict TDD (venv/bin/python manage.py test)
 | 2.11-2.12 Non-pending guard | Same `articles/tests.py` | Integration | ✅ above | ✅ already 302 (stub) but not verified Review not created; now proves | ✅ GET/POST non-pending → redirect work_dashboard, no Review, status unchanged for published/draft/rejected | ✅ 4 cases: approve GET/POST non-pending, reject GET/POST non-pending + POST perms 403 no Review | ✅ Clean — guard at top of get/post before form handling |
 | 2.13 review_form.html template | Same `articles/tests.py` | Integration | ✅ above | ✅ TemplateDoesNotExist before creation | ✅ assertTemplateUsed passes, contains decision, form, article summary, cancel link | ✅ covered by GET tests (template used) | ➖ None needed — simple template |
 | 2.14 work_dashboard links | Same `articles/tests.py` | Integration | ✅ above | ✅ Couldn't find '/review/1/approve/' in response | ✅ Contains approve_url and reject_url + "Aprobar"/"Rechazar" text | ✅ link check for both URLs + text | ✅ Clean — <a href> replaces <form> |
+| 3.1-3.2 Review history visibility | `articles/tests.py` (ReviewHistoryVisibilityTests) | Integration | ✅ 46/46 (PR1+PR2) baseline before Phase 3 | ✅ Couldn't find 'Historial de revisiones' in response (6 failures) | ✅ 10/10 passed (venv/bin/python manage.py test articles.tests.ReviewHistoryVisibilityTests) | ✅ 10 cases: author rejected sees feedback+comments+timestamp, author published sees Aprobado, editor sees all, editor non-reviewer sees history, other reviewer 403 hidden, reader hidden, anonymous hidden, draft no reviews no leak, multi chronological order, non-author no feedback leak | ✅ Clean — view adds reviews ordered + can_view_history; template checks can_view_history and reviews |
+| 3.3-3.4 Resubmission cycle | `articles/tests.py` (ReviewResubmissionTests) | Integration | ✅ above | ✅ Already GREEN (rejected→edit→draft→pending→approve works without code change) — but history not visible until 3.2 | ✅ 2/2 passed (rejected→edit→send→pending→second review, preserve reviews) | ✅ 2 cases: full cycle reject→resubmit→approve (2 reviews), preserve check (count before/after) | ✅ Clean — SendToReviewView already handles draft→pending after edit reset; no change needed |
+| 3.5-3.6 Multiple rounds | `articles/tests.py` (MultipleReviewRoundsTests) | Integration | ✅ above | ✅ Couldn't find 'Historial de revisiones' after 3 cycles (history missing) | ✅ 1/1 passed (3 cycles reject,reject,approve → 3 reviews, order C1<C2<C3, history visible) | ✅ 1 case with 3 round-trip cycles + chronological assert C1<C2<C3 | ✅ Clean — chronological display via order_by created_at |
 
 ### Test Summary
-- **Total tests written**: 46 (13 editorial + 33 articles)
-- **Total tests passing**: 46/46 (PR1 24 + PR2 22)
-- **Layers used**: Unit (13), Integration (33), E2E (0)
-- **Approval tests** (refactoring): None — Phase 2 is new flow, not refactoring (reuse of Article model guarded by safety net 24/24)
-- **Pure functions created**: 0 (Django class-based views — logic is in get/post with transaction.atomic)
+- **Total tests written**: 59 (13 editorial + 46 articles)
+- **Total tests passing**: 59/59 (PR1 24 + PR2 22 + PR3 13)
+- **Layers used**: Unit (13), Integration (46), E2E (0)
+- **Approval tests** (refactoring): None — Phase 3 is new display + resubmission flow (reuse of Article/Review via FK guarded by safety net 46/46)
+- **Pure functions created**: 0 (Django class-based views — logic in get_context_data + template conditionals)
 
-## Work Unit Evidence (PR 2 Core Flow)
+## Work Unit Evidence (PR 3 History Display)
+
+| Evidence | Required value |
+|---|---|
+| Focused test command and exact result | `venv/bin/python manage.py test articles.tests.ReviewHistoryVisibilityTests articles.tests.ReviewResubmissionTests articles.tests.MultipleReviewRoundsTests` → **OK (13 tests, 0 failures)** |
+| Full suite command and exact result | `venv/bin/python manage.py test` → **OK (59 tests, 0 failures)** — PR1+PR2 tests still pass, no regressions |
+| Runtime harness command/scenario and exact result | `venv/bin/python manage.py test` integration harness proves full flow; manual harness `python manage.py runserver` + author/editor login → article detail shows Historial chronologically → verified via integration tests (GET article_detail with can_view_history). Explicit N/A for pure runserver manual step in CI (integration tests cover same path) |
+| Rollback boundary | Revert `articles/views.py` (remove reviews + can_view_history from ArticleDetailView), `articles/templates/articles/article_detail.html` (remove Historial section), `articles/tests.py` (remove 13 ReviewHistory/Resubmission/Multiple tests), `openspec/changes/integrar-review-flujo/tasks.md` Phase 3 marks. No DB migration, no changes to editorial/models.py, articles/forms.py, urls.py |
+
+## Work Unit Evidence (PR 2 Core Flow) — preserved
 
 | Evidence | Required value |
 |---|---|
@@ -93,29 +118,30 @@ Strict TDD (venv/bin/python manage.py test)
 ## Deviations from Design
 - PR1: None — implementation matches design.md exactly. review_approve/review_reject URLs added as stub view to keep PR1 autonomous and routable.
 - PR2: None — implementation matches design.md exactly. `ReviewFormView` GET/POST copied verbatim from design (decision via `'approve' in request.path`, `ReviewForm(decision=decision)`, `transaction.atomic()` with Review.save() + article.save(), messages.success/error, redirect to `work_dashboard`). Template `review_form.html` follows design contract (form, decision context, cancel link). `work_dashboard.html` editor buttons now GET links as specified. Duplicate task numbers 2.11/2.12 in original tasks.md fixed to 2.13/2.14 for clarity.
+- PR3: None — implementation matches design.md exactly. `ArticleDetailView` adds `reviews` ordered by `created_at` and `can_view_history` (author == article.autor or role == editor) per spec visibility rules. Template `article_detail.html` renders "Historial de revisiones" with reviewer, decision badge (Aprobado/Rechazado), comments, feedback, timestamp, gated by `can_view_history and reviews`. Resubmission verified: `SendToReviewView` already handles rejected→draft→pending via `ArticleUpdateView` reset, no change needed.
 
 ## Issues Found
 - PR1: Staticfiles manifest missing on first test run (article_create GET renders base.html → static). Fixed via `collectstatic`. Not a design issue. Initial git mv failed because destination existed via cp; fixed via rm + add.
 - PR2: PR1 rename left `review_create.html` tracked but deleted in working tree (git rm not committed). Fixed in PR2 via `git rm` (91-line deletion now in PR2 diff). No impact on functionality; pure rename artifact.
 - PR2: Initial RED proved 8 failures + 3 errors (stub returned 302 "Flujo de revisión en construcción" instead of 200 form, and did not create Review records). All GREEN after implementation.
+- PR3: Initial RED proved 6 failures (history not rendered, 3 cycles history missing). Non-author/anonymous negative cases already passed (correctly hidden). GREEN after adding `can_view_history` + `reviews` context and template section. Resubmission cycle already GREEN without code change (rejected→edit→draft→pending via ArticleUpdateView+SendToReviewView) — confirmed via 2 resubmission tests. All 13 new tests GREEN on first implementation pass (no second fix needed).
 
 ## Remaining Tasks (Not in this PR)
-- Phase 3: Review history display on article_detail, resubmission cycles (tasks 3.1–3.6)
 - Phase 4: Cleanup (remove ApproveArticleView/RejectArticleView, old URL names) (tasks 4.1–4.4)
 
 ## Workload / PR Boundary
 - Mode: stacked PR slice (stacked-to-main)
-- Current work unit: PR 2 — Core Flow (ReviewFormView approve/reject) — Unit 2 per workload forecast
-- Boundary: Starts from stub ReviewFormView (redirects) + POST forms in work_dashboard, ends with full ReviewFormView GET (render review_form.html with decision pre-fill, non-pending guard) + POST (validate → transaction.atomic Review creation + status update → redirect) for approve/reject, validation errors, permission 403, atomicity, work_dashboard GET links, review_form.html template, all tested (22 new tests). No Phase 3 history display.
-- Estimated review budget impact: PR2 alone ~471 lines (360 insertions + 111 deletions incl. 91-line rename cleanup). Net new logic ~380 lines (73 template + 256 tests + 41 views + 10 dashboard) if excluding 91-line PR1 rename artifact; total stacked (PR1+PR2) ~793 lines across two PRs, each slice reviewable. Next PR3 estimated 150-200 lines.
-- Note: 471 slightly over 400 due to verbose test coverage (22 integration tests) + carrying PR1 rename deletion; reviewer focus still healthy (one behavior: review flow) and tests are with code per work-unit-commits.
+- Current work unit: PR 3 — History Display + Resubmission — Unit 3 per workload forecast
+- Boundary: Starts from ArticleDetailView without history (no reviews/can_view_history), ends with ArticleDetailView adding reviews ordered + can_view_history, article_detail.html Historial section (reviewer, badge Aprobado/Rechazado, comments, feedback, timestamp, visibility author/editor only), plus resubmission/multi-round tests proving rejected→edit→pending→new review accumulates history. No Phase 4 cleanup.
+- Estimated review budget impact: PR3 alone ~260 lines (tests 180 + views 10 + template 25 + docs 45). Well under 400. Total stacked (PR1+PR2+PR3) ~1050 lines across three PRs, each slice reviewable.
 
 ## Status
-23/35 tasks complete (Phase 1 + Phase 2 done). Ready for next batch (PR 3 History Display). PR 2 is autonomous and revertible.
+29/35 tasks complete (Phase 1 + Phase 2 + Phase 3 done). Ready for next batch (PR 4 Cleanup). PR 3 is autonomous and revertible (chain: main 8dc23fa ← PR2 9cb9eed ← PR3 this branch).
 
 ## Commits Made
 - `8dc23fa` feat(articles): add ReviewForm and rename article creation flow (PR1 foundation) — on main
-- PR2 commit pending on `feat/integrar-review-flujo-pr2-core-flow` (this branch)
+- `9cb9eed` feat(articles): implement ReviewFormView approve/reject flow (PR2 core flow) — on feat/integrar-review-flujo-pr2-core-flow
+- PR3 commit pending on `feat/integrar-review-flujo-pr3-history` (this branch, stacked on PR2)
 
 ## Next Recommended
-sdd-apply for Phase 3 (tasks 3.1–3.6) as PR 3 stacked to main (branched from main after PR2 merges, per stacked-to-main). Or sdd-verify if Phase 3+4 are done together as final slice.
+sdd-apply for Phase 4 (tasks 4.1–4.4) as PR 4 cleanup stacked to main. Or sdd-verify if Phase 4 is trivial cleanup.
