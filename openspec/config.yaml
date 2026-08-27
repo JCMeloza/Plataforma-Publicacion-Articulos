@@ -1,0 +1,42 @@
+project: Plataforma-Publicacion-Articulos
+stack: Django 5.2.15 / Python 3.14
+persistence_mode: hybrid
+strict_tdd: true
+detected_at: 2026-08-27
+
+testing:
+  strict_tdd: true
+  test_runner:
+    command: python manage.py test
+    framework: Django TestCase
+  test_layers:
+    unit:
+      available: false
+      tool: —
+    integration:
+      available: false
+      tool: —
+    e2e:
+      available: false
+      tool: —
+  coverage:
+    available: false
+    command: —
+  quality_tools:
+    linter:
+      available: true
+      command: ruff
+    type_checker:
+      available: true
+      command: mypy
+    formatter:
+      available: true
+      command: black
+
+phase_rules:
+  proposal: auto-chain
+  spec: auto-chain
+  design: auto-chain
+  tasks: auto-chain
+  verify: auto-chain
+  archive: auto-chain
