@@ -38,20 +38,20 @@ Chain strategy: stacked-to-main
 
 ## Phase 2: Core Implementation (ReviewFormView Flow)
 
-- [ ] 2.1 Write RED tests for `ReviewFormView.test_func` in `articles/tests.py`: editors allowed (200), reviewers/readers denied (403)
-- [ ] 2.2 Run tests → GREEN: create `ReviewFormView` in `articles/views.py` with `LoginRequiredMixin`, `UserPassesTestMixin`, `test_func` checking `role == 'editor'`
-- [ ] 2.3 Write RED tests for approve GET: shows form with decision='approve' pre-filled
-- [ ] 2.4 Run tests → GREEN: implement `ReviewFormView.get()` with non-pending check, render `review_form.html`
-- [ ] 2.5 Write RED tests for approve POST: valid data → creates Review + publishes article atomically, redirects to dashboard
-- [ ] 2.6 Run tests → GREEN: implement `ReviewFormView.post()` with `transaction.atomic()`, Review creation, status update
-- [ ] 2.7 Write RED tests for reject GET/POST: symmetric to approve with decision='reject', status='rejected'
-- [ ] 2.8 Run tests → GREEN: ensure reject path works identically
-- [ ] 2.9 Write RED tests for validation error: empty comments → form error, no Review created, status unchanged
-- [ ] 2.10 Run tests → GREEN: form validation naturally handles this
-- [ ] 2.11 Write RED tests for non-pending article: approve/reject shows error, redirects, no Review created
-- [ ] 2.12 Run tests → GREEN: non-pending check in both GET/POST returns error message
-- [ ] 2.11 Create `articles/templates/articles/review_form.html` template with form, decision context, cancel link
-- [ ] 2.12 Update `articles/templates/articles/work_dashboard.html`: editor "Aprobar"/"Rechazar" buttons link to `review_approve`/`review_reject` URLs (GET) instead of direct POST forms
+- [x] 2.1 Write RED tests for `ReviewFormView.test_func` in `articles/tests.py`: editors allowed (200), reviewers/readers denied (403)
+- [x] 2.2 Run tests → GREEN: create `ReviewFormView` in `articles/views.py` with `LoginRequiredMixin`, `UserPassesTestMixin`, `test_func` checking `role == 'editor'`
+- [x] 2.3 Write RED tests for approve GET: shows form with decision='approve' pre-filled
+- [x] 2.4 Run tests → GREEN: implement `ReviewFormView.get()` with non-pending check, render `review_form.html`
+- [x] 2.5 Write RED tests for approve POST: valid data → creates Review + publishes article atomically, redirects to dashboard
+- [x] 2.6 Run tests → GREEN: implement `ReviewFormView.post()` with `transaction.atomic()`, Review creation, status update
+- [x] 2.7 Write RED tests for reject GET/POST: symmetric to approve with decision='reject', status='rejected'
+- [x] 2.8 Run tests → GREEN: ensure reject path works identically
+- [x] 2.9 Write RED tests for validation error: empty comments → form error, no Review created, status unchanged
+- [x] 2.10 Run tests → GREEN: form validation naturally handles this
+- [x] 2.11 Write RED tests for non-pending article: approve/reject shows error, redirects, no Review created
+- [x] 2.12 Run tests → GREEN: non-pending check in both GET/POST returns error message
+- [x] 2.13 Create `articles/templates/articles/review_form.html` template with form, decision context, cancel link
+- [x] 2.14 Update `articles/templates/articles/work_dashboard.html`: editor "Aprobar"/"Rechazar" buttons link to `review_approve`/`review_reject` URLs (GET) instead of direct POST forms
 
 ## Phase 3: Integration (Review History Display)
 

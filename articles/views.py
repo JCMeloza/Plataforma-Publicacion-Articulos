@@ -1,15 +1,15 @@
-from ast import If
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
 from .models import Article, Category, Like, Tag, ContactMessage
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import ArticleForm, CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, TagCreateForm, UserProfileForm
+from .forms import ArticleForm, CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, ReviewForm, TagCreateForm, UserProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.utils.text import slugify
+from django.db import transaction
 from django.db.models import Q
 User = get_user_model()
 class ArticleListView(ListView):
@@ -214,10 +214,9 @@ class RejectArticleView(LoginRequiredMixin, UserPassesTestMixin, View):
         return redirect('work_dashboard')
 
 
-# Stub for ReviewFormView (Foundation PR1 — full GET/POST flow implemented in PR2)
 class ReviewFormView(LoginRequiredMixin, UserPassesTestMixin, View):
-    """Handle GET (show form) and POST (create Review + update status) for approve/reject.
-    Full implementation in Phase 2; stub ensures URL routing exists in PR1."""
+    """Handle GET (show form) and POST (create Review + update status) for approve/reject."""
+
     def test_func(self):
         return self.request.user.role == 'editor'
 
@@ -226,17 +225,39 @@ class ReviewFormView(LoginRequiredMixin, UserPassesTestMixin, View):
         if article.status != 'pending':
             messages.error(request, "Este artículo no está pendiente de revisión")
             return redirect('work_dashboard')
-        # Placeholder: redirect until full form flow is implemented in PR2
-        messages.error(request, "Flujo de revisión en construcción")
-        return redirect('work_dashboard')
+
+        decision = 'approve' if 'approve' in request.path else 'reject'
+        form = ReviewForm(decision=decision)
+        return render(request, 'articles/review_form.html', {
+            'form': form, 'article': article, 'decision': decision
+        })
 
     def post(self, request, article_id):
         article = get_object_or_404(Article, id=article_id)
         if article.status != 'pending':
             messages.error(request, "Este artículo no está pendiente de revisión")
             return redirect('work_dashboard')
-        messages.error(request, "Flujo de revisión en construcción")
-        return redirect('work_dashboard')  
+
+        decision = 'approve' if 'approve' in request.path else 'reject'
+        form = ReviewForm(request.POST, decision=decision)
+
+        if form.is_valid():
+            with transaction.atomic():
+                review = form.save(commit=False)
+                review.article = article
+                review.reviewer = request.user
+                review.decision = decision
+                review.save()
+
+                article.status = 'published' if decision == 'approve' else 'rejected'
+                article.save()
+
+            messages.success(request, f"Artículo {'aprobado' if decision == 'approve' else 'rechazado'} correctamente")
+            return redirect('work_dashboard')
+
+        return render(request, 'articles/review_form.html', {
+            'form': form, 'article': article, 'decision': decision
+        })  
     
 class ArticleDetailView(DetailView):
     model = Article

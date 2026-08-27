@@ -78,14 +78,8 @@
                                     </div>
                                         {% elif user.role == 'editor' %}
                                             <div class="editor-actions-group">
-                                                <form action="{% url 'approve_article' article.id %}" method="POST">
-                                                {% csrf_token %}
-                                                    <button class="btn-approve">Aprobar</button>
-                                                </form>
-                                                <form action="{% url 'reject_article' article.id %}" method="POST">
-                                                {% csrf_token %}
-                                                    <button class="btn-reject">Rechazar</button>
-                                                </form>    
+                                                <a href="{% url 'review_approve' article.id %}" class="btn-approve">Aprobar</a>
+                                                <a href="{% url 'review_reject' article.id %}" class="btn-reject">Rechazar</a>
                                             </div>
                                 {% endif %}
                             </td>
