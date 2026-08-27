@@ -2,7 +2,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, DetailView, ListView, TemplateView, UpdateView
 from .models import Article, Category, Like, Tag, ContactMessage
 from django.contrib.auth.views import LoginView, LogoutView
-from .forms import ArticleForm, CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewCreateForm, ReviewForm, TagCreateForm, UserProfileForm
+from .forms import ArticleForm, CategoryCreateForm, CommentForm, CustomUserCreationForm, ChangeRoleForm, ReviewForm, TagCreateForm, UserProfileForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
@@ -178,39 +178,6 @@ class SendToReviewView(LoginRequiredMixin, UserPassesTestMixin, View):
             messages.error(request, "Este artículo no se puede enviar a revisión en su estado actual.")
             
         # Redirigimos de vuelta al escritorio de trabajo
-        return redirect('work_dashboard')
-
-
-class ApproveArticleView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.role == 'editor'
-    
-    def post(self, request, article_id):
-        article = get_object_or_404(Article, id=article_id)
-
-        if article.status == 'pending':
-            article.status = 'published'
-            article.save()
-            messages.success(request, f"🟢 El artículo '{article.title}' ha sido PUBLICADO en la web.")
-        else:
-            messages.error(request, "Este artículo no está pendiente de revisión.")
-            
-        return redirect('work_dashboard')  
-
-class RejectArticleView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self):
-        return self.request.user.role == 'editor'
-    
-    def post(self, request, article_id):
-        article = get_object_or_404(Article, id=article_id)
-
-        if article.status == 'pending':
-            article.status = 'rejected'
-            article.save()
-            messages.success(request, f"🔴 El artículo '{article.title}' ha sido RECHAZADO Y devuelto al autor.")
-        else:
-            messages.error(request, "Este artículo no está pendiente de revisión.")
-            
         return redirect('work_dashboard')
 
 

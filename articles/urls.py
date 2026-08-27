@@ -1,6 +1,6 @@
 from django.urls import path
 from django.views.generic import TemplateView
-from .views import AddCommentView, AdminDashboardView, ApproveArticleView, ArticleCreateView, ArticleDetailView, ArticleListView, ArticleUpdateView, CategoryCreateView, ChangeUserRoleView, ContactView, InboxView, LikeArticleView, MessageDetailView, ProfileDetailView, ProfileListView, ProfileView, RegisterView, CustomLoginView, CustomLogoutView, RejectArticleView, ReviewCreateView, ReviewFormView, SendToReviewView, TagCreateView, WorkDashboardView
+from .views import AddCommentView, AdminDashboardView, ArticleCreateView, ArticleDetailView, ArticleListView, ArticleUpdateView, CategoryCreateView, ChangeUserRoleView, ContactView, InboxView, LikeArticleView, MessageDetailView, ProfileDetailView, ProfileListView, ProfileView, RegisterView, CustomLoginView, CustomLogoutView, ReviewFormView, SendToReviewView, TagCreateView, WorkDashboardView
 
 urlpatterns = [
     path('', ArticleListView.as_view(), name='home'),
@@ -20,8 +20,6 @@ urlpatterns = [
     path('dashboard/admin/tag/create/', TagCreateView.as_view(), name='tag_create'),
     
     path('dashboard/workspace/send-to-review/<int:article_id>/', SendToReviewView.as_view(), name='send_to_review'),
-    path('dashboard/workspace/aprove/<int:article_id>/', ApproveArticleView.as_view(), name='approve_article'),
-    path('dashboard/workspace/reject/<int:article_id>/', RejectArticleView.as_view(), name='reject_article'),
 
     path('review/<int:article_id>/approve/', ReviewFormView.as_view(), name='review_approve'),
     path('review/<int:article_id>/reject/', ReviewFormView.as_view(), name='review_reject'),

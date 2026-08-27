@@ -579,3 +579,50 @@ class MultipleReviewRoundsTests(TestCase):
         content = resp.content.decode()
         self.assertContains(resp, "Historial de revisiones")
         self.assertTrue(content.index("C1") < content.index("C2") < content.index("C3"))
+
+
+# ── Phase 4: Cleanup — removed old Approve/Reject views & URLs (Strict TDD RED) ──
+class OldReviewViewsRemovedTests(TestCase):
+    """TDD RED: old ApproveArticleView/RejectArticleView and approve_article/reject_article URLs must NOT exist."""
+
+    def test_approve_article_url_not_resolvable(self):
+        from django.urls import NoReverseMatch
+
+        with self.assertRaises(NoReverseMatch):
+            reverse("approve_article", args=[1])
+
+    def test_reject_article_url_not_resolvable(self):
+        from django.urls import NoReverseMatch
+
+        with self.assertRaises(NoReverseMatch):
+            reverse("reject_article", args=[1])
+
+    def test_approve_article_path_not_resolvable(self):
+        from django.urls import Resolver404, resolve
+
+        with self.assertRaises(Resolver404):
+            resolve("/dashboard/workspace/aprove/1/")
+
+    def test_reject_article_path_not_resolvable(self):
+        from django.urls import Resolver404, resolve
+
+        with self.assertRaises(Resolver404):
+            resolve("/dashboard/workspace/reject/1/")
+
+    def test_approve_article_view_not_importable(self):
+        # ApproveArticleView should have been removed; importing should fail
+        with self.assertRaises(ImportError):
+            from articles.views import ApproveArticleView  # noqa: F401
+
+        # also ensure not present as attribute on views module
+        import articles.views as views_module
+
+        self.assertFalse(hasattr(views_module, "ApproveArticleView"))
+
+    def test_reject_article_view_not_importable(self):
+        with self.assertRaises(ImportError):
+            from articles.views import RejectArticleView  # noqa: F401
+
+        import articles.views as views_module
+
+        self.assertFalse(hasattr(views_module, "RejectArticleView"))

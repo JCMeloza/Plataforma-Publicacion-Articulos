@@ -66,7 +66,7 @@ Chain strategy: stacked-to-main
 
 ## Phase 4: Cleanup & Verification
 
-- [ ] 4.1 Remove old `ApproveArticleView` and `RejectArticleView` from `articles/views.py`
-- [ ] 4.2 Remove old `approve_article` and `reject_article` URL patterns from `articles/urls.py` (replaced by review_approve/review_reject)
-- [ ] 4.3 Run full test suite: `python manage.py test articles editorial`
-- [ ] 4.4 Verify all spec scenarios pass manually via `python manage.py runserver`
+- [x] 4.1 Remove old `ApproveArticleView` and `RejectArticleView` from `articles/views.py`
+- [x] 4.2 Remove old `approve_article` and `reject_article` URL patterns from `articles/urls.py` (replaced by review_approve/review_reject)
+- [x] 4.3 Run full test suite: `python manage.py test articles editorial`
+- [x] 4.4 Verify all spec scenarios pass manually via `python manage.py runserver`
